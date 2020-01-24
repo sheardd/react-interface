@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
+import ep from '../../constants';
+import Interface from '../Interface';
 import './App.css';
 
 class App extends Component {
@@ -15,11 +17,9 @@ class App extends Component {
   render() {
     const {type} = this.state;
     return (
-      <div className={type} id="ep-interface">
-        <div id="ep-interface-inner">
-          <h1>I am a kitchen interface</h1>
-        </div>
-      </div>
+      <Interface
+      type={type}
+      />
     );
   }
 }
