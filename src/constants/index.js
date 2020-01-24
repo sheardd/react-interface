@@ -3,8 +3,8 @@ export const ep = {
 		"testing":{
 			"handle":"testing",
 			"name":"Testing",
-			"address":"10\/5 Tower Place, EH6 7BZ",
-			"address_1":"10\/5 Tower Place",
+			"address":"10/5 Tower Place, EH6 7BZ",
+			"address_1":"10/5 Tower Place",
 			"address_2":"",
 			"postcode":"EH6 7BZ",
 			"spend":"10.00",
