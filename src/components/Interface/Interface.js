@@ -4,10 +4,13 @@ import axios from 'axios';
 import classNames from 'classnames';
 import './Interface.css';
 
-const Interface = ({type}) =>
+const Interface = ({type,store,nonce}) =>
   <div className={type} id="ep-interface">
     <div id="ep-interface-inner">
-      <h1>I am a kitchen interface</h1>
+      <h1>I am the kitchen interface for {store.handle}</h1>
+      <p>{type}</p>
+      <p>{store.handle}</p>
+      <p>{nonce}</p>
     </div>
   </div>
 

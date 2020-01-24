@@ -77,3 +77,4 @@ export const ep = {
 	},
 	"staff_nonce":"47e4698b3f"
 };
+export const ajaxurl = '/wp-admin/admin-ajax.php';
