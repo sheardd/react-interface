@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import PropTypes from 'prop-types';
+import axios from 'axios';
+import classNames from 'classnames';
 import './App.css';
 
 class App extends Component {
