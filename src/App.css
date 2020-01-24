@@ -1,0 +1,628 @@
+/* KIDI Interface */
+#ep-interface {
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+  position:absolute;
+  margin: 0;
+  font-size: 16px;
+  background-color: #323232;
+  color:#fefefe;
+  z-index: 100000;
+  width:100%;
+  min-height:200%;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+}
+#ep-interface-inner.di {
+  padding: 8px;
+}
+#ep-interface input, textarea, select, button {
+  font-size: 1em;
+}
+#ep-interface .fas {
+  font-size: 1.5em;
+}
+
+#ep-interface .inline-title {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#int-nav, #store-indicator,
+#status-container {
+  position: fixed;
+}
+#int-nav {
+  width: 100%;
+  top: 0;
+}
+#int-nav nav, .buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  font-size: 1.4em;
+}
+#int-nav nav #int-nav-close,
+#int-nav nav #int-nav-refresh {
+  width: 12.5%;
+}
+#int-nav nav p {
+  margin: auto;
+}
+#int-nav nav > *,
+#int-nav .buttons-container > *,
+#store-indicator, .buttons-container .order-button,
+.buttons-container .settle-button,
+#status-container > * {
+  border: 1px solid #a0a0a0;
+  height: 53px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #323232;
+  text-decoration: none;
+  border-radius: 2px;
+}
+#int-nav nav .bg-dark-grey {
+  color: #fefefe;
+}
+#int-nav nav > *:last-child,
+#int-nav .buttons-container > *:last-child {
+  margin-right: 0;
+}
+#int-nav nav > * {
+  width: 25%;
+  box-sizing: border-box;
+  font-size: 0.7em;
+  padding: 0;
+  border-radius: 0;
+}
+#int-nav nav button {
+  font-size: inherit;
+  padding: 0;
+  border: 0;
+}
+#store-indicator, #status-container {
+  bottom: 0;
+  max-width: 50%;
+  color: #323232;
+  font-size: 1.3em;
+  min-width: 15%;
+  padding: 0 3%;
+  box-sizing: border-box;
+}
+#store-indicator {
+  right: 0;
+}
+#ep-interface .modal {
+  position: fixed;
+  top: 0;
+  height: 100%;
+  background-color: #323232ab;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#ep-interface .modal .modal-text {
+  font-size: 1.3em;
+  margin-bottom: 1.5em;
+  padding: 0 5%;
+  line-height: 1.35;
+}
+#ep-interface .modal .modal-text span.italic {
+  display: inline-block;
+  width: 100%;
+  font-style: italic;
+  margin-top: 1em;
+  font-size: initial;
+}
+#ep-interface .modal .buttons-container {
+  justify-content: space-evenly;
+}
+#ep-interface .modal .buttons-container > * {
+  width: 106px;
+}
+/* Interface Nav Specifics (KI vs DI) */
+/* Kitchen Interface Nav */
+#ep-interface.ki #int-nav-wait {
+  width: 100%;
+  height: 59px;
+  padding: 0;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  border-width: 1px;
+}
+#ep-interface.ki #int-nav-wait > * {
+  border: 1px solid #a0a0a0;
+  padding: 5px 0;
+  margin: 0;
+}
+#ep-interface.ki #int-nav-wait .fas {
+  margin: 0 3px;
+}
+#ep-interface.ki #int-nav-wait button {
+  width: 20%;
+  min-width: 46px;
+  margin-top: 0;
+  height: 36px;
+}
+#ep-interface.ki #int-nav-wait .wait-time {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 0;
+  font-size: 0.8em;
+}
+#ep-interface.ki #int-nav-wait.bg-red .wait-time {
+  color: #fefefe;
+}
+#ep-interface.ki #menu-update,
+#ep-interface.ki #driver-assign,
+#ep-interface.ki #error-container {
+  display: none;
+  width: 100%;
+  overflow-y: scroll;
+  color: #444;
+}
+#ep-interface.ki #menu-update.open,
+#ep-interface.ki #driver-assign.open,
+#ep-interface.ki #error-container.open {
+  display: flex;
+}
+#ep-interface.ki #menu-update #menu-update-inner,
+#ep-interface.ki #driver-assign #driver-assign-inner,
+#ep-interface.ki #error-container #error-inner {
+  width: 90%;
+  height: 90%;
+}
+#ep-interface.ki #menu-update #menu-update-form,
+#ep-interface.ki #menu-update #menu-update-list,
+#ep-interface.ki #menu-update #menu-update-form > *,
+#ep-interface.ki #menu-update .collection,
+#ep-interface.ki #driver-assign #driver-assign-form,
+#ep-interface.ki #driver-assign #driver-assign-list,
+#ep-interface.ki #driver-assign #driver-assign-form > *,
+#ep-interface.ki #driver-assign .collection,
+#ep-interface.ki #error-container #error-list {
+  width: 100%;
+}
+#ep-interface.ki #menu-update #menu-update-form,
+#ep-interface.ki #menu-update #menu-update-list,
+#ep-interface.ki #driver-assign #driver-assign-form,
+#ep-interface.ki #driver-assign #driver-assign-list,
+#ep-interface.ki .btn-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+#ep-interface.ki #menu-update #menu-update-form > p,
+#ep-interface.ki #driver-assign #driver-assign-form > p,
+#ep-interface.ki .submit-button,
+#ep-interface.ki #error-container p,
+#ep-interface.ki #error-container li {
+  font-size: 1.8em;
+}
+#ep-interface.ki #menu-update #menu-update-form > p.pls-wait-msg,
+#ep-interface.ki #driver-assign #driver-assign-form > p.pls-wait-msg {
+  text-align: center;
+}
+#ep-interface.ki #driver-assign #driver-assign-form > p.pls-wait-msg.hide {
+  display: none;
+}
+#ep-interface.ki #menu-update .collection,
+#ep-interface.ki #driver-assign .collection,
+#ep-interface.ki .submit-button {
+  box-sizing: border-box;
+  border: 1px solid #323232;
+}
+#ep-interface.ki #menu-update .collection h3,
+#ep-interface.ki #driver-assign .collection h3,
+#ep-interface.ki .submit-button {
+  text-align: center;
+}
+#ep-interface.ki #menu-update .collection h3,
+#ep-interface.ki #driver-assign .collection h3 {
+  margin-bottom: 0;
+}
+#ep-interface.ki #menu-update .collection > label,
+#ep-interface.ki #driver-assign .collection > label {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1em 0;
+  display: block;
+}
+#ep-interface.ki #menu-update #menu-update-list .collection-check,
+#ep-interface.ki #menu-update .collection input.collection-check
++ ul.collection-list, #ep-interface.ki #menu-update .collection-list
+.collection-list-item input[type='checkbox'],
+#ep-interface.ki #driver-assign .collection input[type='radio']  {
+  display: none;
+}
+#ep-interface.ki #menu-update .collection input.collection-check:checked
++ ul.collection-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+#ep-interface.ki #menu-update .collection-list .collection-list-item,
+#ep-interface.ki .submit-button {
+  width: 50%;
+  box-sizing: border-box;
+}
+#ep-interface.ki #menu-update .collection-list .collection-list-item,
+#ep-interface.ki #driver-assign .collection-list .collection-list-item {
+  margin: 0;
+  border: 1px solid #323232;
+}
+#ep-interface.ki #menu-update .collection-list .collection-list-item label,
+#ep-interface.ki #driver-assign .collection-list .collection-list-item label {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+#ep-interface.ki #menu-update .collection-list .collection-list-item label {
+  background-color: red;
+  color: #fefefe;   
+}
+#ep-interface.ki #menu-update .collection-list .collection-list-item input:checked + label {
+  background-color: initial;
+  color: #444;
+}
+#ep-interface.ki #driver-assign .collection input:checked + label {
+  background-color: #31ff00;
+}
+#ep-interface.ki #menu-update .collection-list .collection-list-item label p,
+#ep-interface.ki #driver-assign .collection-list .collection-list-item label p {
+  margin: 1em;
+}
+#ep-interface.ki .submit-button {
+  padding: 1em 0;
+  margin-bottom: 25px;
+}
+#ep-interface.ki #error-container #error-list {
+  padding-left: 7%;
+  box-sizing: border-box;
+}
+#ep-interface.ki #error-container .error-list-item {
+  list-style: disc;
+  margin-bottom: 0.8em;
+  line-height: initial;
+}
+/* Colour Animations */
+@-webkit-keyframes color_change_del {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #ffbfff; color: #323232;}
+  100% { background-color: #ffbfff; color: #323232;}
+}
+@-moz-keyframes color_change_del {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #ffbfff; color: #323232;}
+  100% { background-color: #ffbfff; color: #323232;}
+}
+@-ms-keyframes color_change_del {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #ffbfff; color: #323232;}
+  100% { background-color: #ffbfff; color: #323232;}
+}
+@-o-keyframes color_change_del {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #ffbfff; color: #323232;}
+  100% { background-color: #ffbfff; color: #323232;}
+}
+@keyframes color_change_del {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #ffbfff; color: #323232;}
+  100% { background-color: #ffbfff; color: #323232;}
+}
+@-webkit-keyframes color_change_col {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #9cf0ff; color: #323232}
+  100% { background-color: #9cf0ff; color: #323232;}
+}
+@-moz-keyframes color_change_col {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #9cf0ff; color: #323232}
+  100% { background-color: #9cf0ff; color: #323232;}
+}
+@-ms-keyframes color_change_col {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #9cf0ff; color: #323232}
+  100% { background-color: #9cf0ff; color: #323232;}
+}
+@-o-keyframes color_change_col {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #9cf0ff; color: #323232}
+  100% { background-color: #9cf0ff; color: #323232;}
+}
+@keyframes color_change_col {
+  0% { background-color: red; color: #fefefe;}
+  49% { background-color: red; color: #fefefe;}
+  50% { background-color: #9cf0ff; color: #323232}
+  100% { background-color: #9cf0ff; color: #323232;}
+}
+#ep-interface.ki .order-container.cancelled {
+  background-color: red;
+}
+#ep-interface.ki .order-container.cancelled,
+#ep-interface.ki .order-container.cancelled h3 {
+  color: #fefefe;
+}
+#ep-interface.ki .order-container.delivery.cancel-flash,
+#ep-interface.ki .order-container.delivery.cancel-flash h3 {
+  -webkit-animation: color_change_del 0.8s infinite alternate;
+  -moz-animation: color_change_del 0.8s infinite alternate;
+  -ms-animation: color_change_del 0.8s infinite alternate;
+  -o-animation: color_change_del 0.8s infinite alternate;
+  animation: color_change_del 0.8s infinite alternate;
+}
+#ep-interface.ki .order-container.collect.cancel-flash,
+#ep-interface.ki .order-container.collect.cancel-flash h3 {
+  -webkit-animation: color_change_col 0.8s infinite alternate;
+  -moz-animation: color_change_col 0.8s infinite alternate;
+  -ms-animation: color_change_col 0.8s infinite alternate;
+  -o-animation: color_change_col 0.8s infinite alternate;
+  animation: color_change_col 0.8s infinite alternate;
+}
+/* Driver Interface Nav */
+#ep-interface.di nav #int-nav-close,
+#ep-interface.di nav #int-nav-settle {
+  width: 15%;
+}
+#ep-interface.di nav #int-nav-filter-open,
+#ep-interface.di nav #int-nav-filter-other {
+  width: 35%;
+}
+#ep-interface.di nav #int-nav-filter-other:after {
+  display:block;
+  content:"";
+  height: 100%;
+  width: 15%;
+  position: absolute;
+  right: 0;
+  background-color: #323232;
+  opacity: 0.6;
+  top: 0;
+}
+#ep-interface.di nav #int-nav-filter-other.bg-dark-grey:after {
+  display: none;
+}
+/* Order Feeds */
+#ep-interface #order-feeds {
+  margin-top: 112px;
+}
+#ep-interface.di #order-feeds {
+  margin-top: 53px;
+}
+#ep-interface .order-feed {
+  display: none;
+  flex-wrap: wrap;
+}
+#ep-interface .order-feed.open {
+  display: flex;
+}
+#ep-interface h3 {
+  color: #323232;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-size: 1.6em;
+  line-height: 0.8em;
+}
+#ep-interface .order-sidebar h3 {
+  text-align: center;
+}
+#ep-interface .order-container.scheduled .order-sidebar h3.target,
+#ep-interface.di .order-container.scheduled .order-sidebar h3 {
+  border: solid 3px red;
+  color: red;
+  padding: 4px;
+  box-sizing: border-box;
+  background: #fefefe;
+}
+#ep-interface .order-container.delivery.scheduled .order-sidebar h3,
+#ep-interface.di .order-container.scheduled .order-sidebar h3 {
+  margin: 0.3rem 0;
+}
+#ep-interface .order-container.delivery.scheduled .order-sidebar h3.target {
+  margin-top: 0;
+}
+#ep-interface .order-container {
+  color: #323232;
+  background-color: #323232;
+  margin-bottom: 3px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 8px 2%;
+  width: 100%;
+}
+#ep-interface .order-container.collect {
+  background-color: #9cf0ff;
+}
+#ep-interface.di .order-container,
+#ep-interface .order-container.delivery {
+  background-color: #ffbfff;
+}
+#ep-interface .order-container .order-inner {
+  width: 80%;
+}
+#ep-interface .order-container .order-sidebar {
+  width: 20%;
+  max-width: 105px;
+}
+#ep-interface.di .order-container .order-inner {
+  width: 75%;
+}
+#ep-interface.di .order-container .order-sidebar {
+  width: 25%;
+}
+#ep-interface .order-container .order-items-container,
+#ep-interface .order-container .order-notes-container {
+  max-height: 120px;
+  overflow: hidden; 
+}
+#ep-interface .order-container .order-type {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+#ep-interface .order-container .order-type h3.packaging {
+  font-weight: 400;
+  border-bottom: 2px solid;
+  padding-bottom: 2px;
+}
+#ep-interface .order-container .order-items-list {
+  margin-block-start: 6px;
+  margin-block-end: 0;
+  padding-inline-start: 0;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-height: 800px;
+}
+#ep-interface .order-container .order-items-list .order-item {
+  max-width: 50%;
+  border-bottom: 1px solid #323232;
+  padding-bottom: 2px;
+  margin-bottom: 9px;
+}
+#ep-interface .order-container .order-item-extras-list {
+  margin-inline-start: 10px;
+  margin-block-start: 3px;
+}
+#ep-interface .order-container .order-items-list .order-item-extra {
+  margin-bottom: 3px;
+  font-style: italic;
+}
+@media screen and (min-width: 768px) {
+  #ep-interface h3 {
+    font-size: 2em;
+  }
+  #ep-interface .order-container .order-items-list {
+    max-height: 300px;
+  }
+  #ep-interface .order-container .order-items-list .order-item {
+    max-width: 33%;
+  }
+}
+@media screen and (min-width: 1024px) {
+  #ep-interface .order-container .order-items-list {
+    max-height: 250px;
+  }
+}
+#ep-interface .order-container .order-notes-container .order-notes {
+  margin-block-start: 0;
+  margin-block-end: 0;
+  padding-inline-start: 0;
+}
+#ep-interface .order-container .order-button {
+  width: 100%;
+  margin-bottom: 10px;
+}
+#ep-interface .order-supplementary-container,
+#ep-interface .order-notes-container {
+  width: 100%;
+}
+#ep-interface .order-supplementary-container,
+#ep-interface .order-notes-container,
+#ep-interface .buttons-container.bottom,
+#ep-interface.di .order-items-container {
+  display: none;
+}
+#ep-interface .order-container.open .order-supplementary-container,
+#ep-interface .order-container.open .buttons-container.bottom {
+  display: flex;
+}
+#ep-interface .order-container.open .order-notes-container,
+#ep-interface.di .order-container.open .order-items-container {
+  display: block;
+}
+#ep-interface .order-info-container p {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+#ep-interface .order-supplementary-container {
+  margin-bottom: 25px;
+  justify-content: space-between;
+}
+#ep-interface #open-feed .buttons-container .order-undo  {
+  display: none;
+}
+#ep-interface #other-feed .buttons-container .order-complete,
+#ep-interface .order-container.collect .buttons-container .order-driver {
+  display: none;
+}
+#ep-interface .order-container.open .order-items-container,
+#ep-interface .order-container.open .order-notes-container {
+  max-height: unset;
+  overflow: initial;
+}
+#ep-interface.di .order-container .closed-message {
+  display: none;
+}
+#ep-interface.di .order-container.closed .closed-message {
+  display: block;
+  width: 100%;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+}
+#ep-interface.di .order-supplementary-container .buttons-container.bottom .order-revert,
+#ep-interface.di .order-container.closed .order-supplementary-container .buttons-container.bottom .order-complete {
+  display: none;
+}
+#ep-interface.di .order-container.closed .order-supplementary-container .buttons-container.bottom .order-revert{
+  display: flex;
+}
+/* Connection & Print Status for KI */
+#status-container {
+  font-size: 1em;
+  text-align: center; 
+  padding: 0;
+  min-width: 160px;
+  display: flex;
+  flex-wrap: wrap;
+}
+#status-container > * {
+  min-width: 80px;
+}
+#connect-status.bg-red,
+#print-status.bg-red {
+  color: #fefefe;
+}
+#update-status {
+  display: none;
+}
+#update-status.updating {
+  display: flex;
+}
+/* Colouring in! */
+.bg-grey,
+.bg-grey button,
+#ep-interface .bg-grey.modal {
+  background-color: #dddddd;
+}
+.bg-dark-grey,
+.bg-dark-grey button {
+  background-color: #a0a0a0;
+  color: #fefefe;
+}
+.bg-red,
+.bg-red button {
+  background-color: red;
+  color: #fefefe;
+}
+.bg-green,
+.bg-green button {
+  background-color: #31ff00;
+}
