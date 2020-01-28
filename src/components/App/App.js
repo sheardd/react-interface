@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
 import Interface from '../Interface';
+import Nav from '../Nav';
 import './App.css';
 
 class App extends Component {
@@ -32,6 +33,7 @@ class App extends Component {
       store={store}
       orders={orders}
       ajaxurl={ajaxurl}>
+        <Nav />
       </ Interface>
     );
   }
