@@ -4,6 +4,7 @@ import axios from 'axios';
 import classNames from 'classnames';
 import Interface from '../Interface';
 import Nav from '../Nav';
+import FeedGrp from '../FeedGrp';
 import './App.css';
 
 class App extends Component {
@@ -36,6 +37,7 @@ class App extends Component {
         <Nav
         type={type}
         store={store} />
+        <FeedGrp orders={orders} />
       </ Interface>
     );
   }
