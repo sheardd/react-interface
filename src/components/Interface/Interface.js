@@ -2,24 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
+import KitchenInterface from '../KitchenInterface'
+import DriverInterface from '../DriverInterface'
 import './Interface.css';
 
-const Interface = ({
-	type,
-	handle,
-	nonce,
-	store,
-	orders,
-}) =>
-  <div className={type} id="ep-interface">
-    <div id="ep-interface-inner">
-      <h1>I am the kitchen interface for {handle}</h1>
-      <p>{type}</p>
-      <p>{handle}</p>
-      <p>{nonce}</p>
-      <p>{store.wait_time}</p>
-      <p>{store.wt_updated}</p>
-    </div>
-  </div>
+/**
+  * Develop this at some point to have error handling (otherwise any type is valid
+  * to some degree and just falls back to DriverInterface)
+  */
+
+const Interface = (props) =>
+  props.type === "ki"
+  ? <KitchenInterface {...props} />
+  : <DriverInterface {...props} />
 
 export default Interface;
