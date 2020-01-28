@@ -11,6 +11,7 @@ ReactDOM.render(<App
 	nonce={ep.staff_nonce}
 	wait_time={ep.stores.testing.wait_time}
 	wt_updated={ep.stores.testing.wt_updated}
+	ajaxurl={ajaxurl}
 	/>,
 	document.getElementById('root'));
 
