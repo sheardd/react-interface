@@ -23,8 +23,8 @@ class App extends Component {
   }
 
   render() {
-    const {type,handle,nonce, ajaxurl} = this.props;
-    const {store,orders} = this.state;
+    const {type, handle, nonce, ajaxurl} = this.props;
+    const {store, orders} = this.state;
     return (
       <Interface
       type={type}
@@ -32,8 +32,10 @@ class App extends Component {
       nonce={nonce}
       store={store}
       orders={orders}
-      ajaxurl={ajaxurl}>
-        <Nav />
+      ajaxurl={ajaxurl} >
+        <Nav
+        type={type}
+        store={store} />
       </ Interface>
     );
   }
