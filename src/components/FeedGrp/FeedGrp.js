@@ -7,8 +7,8 @@ import './FeedGrp.css';
 
 const FeedGrp = (props) => 
   <div id="order-feeds">
-    <Feed id="open-feed" className="order-feed open" {...props} />
-    <Feed id="other-feed" className="order-feed" {...props} />
+    <Feed id="open-feed" className="order-feed open" feed="open" {...props} />
+    <Feed id="other-feed" className="order-feed" feed="other" {...props} />
   </div>
 
 export default FeedGrp;
