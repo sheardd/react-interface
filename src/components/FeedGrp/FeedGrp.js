@@ -5,10 +5,21 @@ import classNames from 'classnames';
 import Feed from '../Feed'
 import './FeedGrp.css';
 
-const FeedGrp = (props) => 
-  <div id="order-feeds">
-    <Feed id="open-feed" className="order-feed open" feed="open" {...props} />
-    <Feed id="other-feed" className="order-feed" feed="other" {...props} />
-  </div>
+const FeedGrp = ({activeFeed, ...rest}) => {
+  const openClasses = classNames(
+    "order-feed",
+    {"open": activeFeed === "open"}
+  );
+  const otherClasses = classNames(
+    "order-feed",
+    {"other": activeFeed === "other"}
+  );
+  return (
+    <div id="order-feeds">
+      <Feed id="open-feed" className={openClasses} feed="open" {...rest} />
+      <Feed id="other-feed" className={otherClasses} feed="other" {...rest} />
+    </div>
+  );
+}
 
 export default FeedGrp;

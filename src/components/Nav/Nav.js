@@ -6,15 +6,28 @@ import Button from '../Button'
 import './Nav.css';
 
 const Nav = (props) => {
+  const {
+    type,
+    activeFeed,
+    switchFeed,
+  } = props;
+  const openClasses = classNames(
+    "bg-grey",
+    {"bg-dark-grey": activeFeed === "open"}
+  );
+  const otherClasses = classNames(
+    "bg-grey",
+    {"bg-dark-grey": activeFeed === "other"}
+  );
   return (
     <div id='int-nav'>
       {
-        props.type === "ki" ?
+        type === "ki" ?
         <nav>
           <Button id='int-nav-close' className='bg-grey'><span className='fas fa-times'></span></Button>
           <Button id='int-nav-refresh' className='bg-grey'><span className='fas fa-undo'></span></Button>
-          <Button className='bg-grey bg-dark-grey' id='int-nav-filter-open'>OPEN</Button>
-          <Button className='bg-grey' id='int-nav-filter-other'>DONE</Button>
+          <Button className={openClasses} id='int-nav-filter-open' onClick={() => switchFeed("open")} >OPEN</Button>
+          <Button className={otherClasses} id='int-nav-filter-other' onClick={() => switchFeed("other")} >DONE</Button>
           <Button id='int-nav-menu' className='bg-grey'>MENU</Button>
           <span id='int-nav-wait' className='bg-grey wait-array'>
             <Button className='wait' value='0'>+0</Button>
@@ -31,8 +44,8 @@ const Nav = (props) => {
         :
         <nav>
           <Button id="int-nav-close" className="bg-grey"><span className="fas fa-times"></span></Button>
-          <Button className="bg-grey bg-dark-grey" id="int-nav-filter-open">OPEN</Button>
-          <Button className="bg-grey" id="int-nav-filter-other">PAID</Button>
+          <Button className={openClasses} id="int-nav-filter-open" onClick={() => switchFeed("open")} >OPEN</Button>
+          <Button className={otherClasses} id="int-nav-filter-other" onClick={() => switchFeed("other")} >PAID</Button>
           <Button className="bg-grey" id="int-nav-settle"><span className="fas fa-cash-register"></span></Button>
         </nav>
       }

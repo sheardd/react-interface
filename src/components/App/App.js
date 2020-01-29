@@ -19,13 +19,16 @@ class App extends Component {
         wait_time: props.wait_time,
         wt_updated: props.wt_updated,
       },
+      activeFeed: "open",
       orders: sampleOrders,
     };
+
+    this.switchFeed = this.switchFeed.bind(this);
   }
 
   render() {
     const {type, handle, nonce, ajaxurl} = this.props;
-    const {store, orders} = this.state;
+    const {store, activeFeed, orders} = this.state;
     return (
       <Interface
       type={type}
@@ -36,12 +39,20 @@ class App extends Component {
       ajaxurl={ajaxurl} >
         <Nav
         type={type}
-        store={store} />
-        <FeedGrp orders={orders} />
+        store={store}
+        activeFeed={activeFeed}
+        switchFeed={this.switchFeed} />
+        <FeedGrp
+          orders={orders}
+          activeFeed={activeFeed} />
         <Location>{handle.toUpperCase()}</Location>
         {type === "ki" ? <Status /> : null}
       </ Interface>
     );
+  }
+
+  switchFeed(feed) {
+    this.setState({activeFeed: feed});
   }
 }
 
