@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import Interface from '../Interface';
 import Nav from '../Nav';
 import FeedGrp from '../FeedGrp';
+import Status from '../Status';
+import Location from '../Location';
 import './App.css';
 
 class App extends Component {
@@ -1874,6 +1876,8 @@ class App extends Component {
         type={type}
         store={store} />
         <FeedGrp orders={orders} />
+        <Location>{handle.toUpperCase()}</Location>
+        {type === "ki" ? <Status /> : null}
       </ Interface>
     );
   }
