@@ -15,7 +15,7 @@ const Feed = (props) => {
   return (
     <div id={id} className={className}>
       {orders[feed].map(order =>
-        <Order order={order} />
+        <Order order={order} key={order.id}/>
       )}
     </div>
   );
