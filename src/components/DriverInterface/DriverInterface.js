@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
+import Nav from '../Nav';
 import './DriverInterface.css';
 
 class DriverInterface extends Component {
@@ -19,6 +20,8 @@ class DriverInterface extends Component {
       orders,
     } = this.state;
     const {
+      activeFeed,
+      switchFeed,
       type,
       handle,
       nonce,
@@ -27,6 +30,10 @@ class DriverInterface extends Component {
     return (
       <div className={type} id="ep-interface">
         <div id="ep-interface-inner">
+          <Nav
+            type={type}
+            activeFeed={activeFeed}
+            switchFeed={switchFeed} />
           {children}
         </div>
       </div>
