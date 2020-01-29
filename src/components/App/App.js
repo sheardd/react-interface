@@ -1850,7 +1850,8 @@ class App extends Component {
     "position": 1580300254,
     "placedUTC": 1579607889000,
     "hasPackaging": true,
-    "brkdwn": "5 ITEMS WITH A TOTAL OF 3 EXTRAS"
+    "brkdwn": "5 ITEMS WITH A TOTAL OF 3 EXTRAS",
+    "open": true,
 }
         ],
         other: []

@@ -23,7 +23,6 @@ const Order = (props) => {
     {"cancelled": order.cancelled},
     {"open": order.open},
   );
-  console.log(order);
   return (
     <div
     className={orderClasses}
