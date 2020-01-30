@@ -1834,7 +1834,7 @@ const sampleOrders = {
     "placedUTC": 1579607889000,
     "hasPackaging": true,
     "brkdwn": "5 ITEMS WITH A TOTAL OF 3 EXTRAS",
-    "open": true,
+    "open": false,
 }
         },
         other: {
