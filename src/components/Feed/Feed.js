@@ -11,11 +11,13 @@ const Feed = (props) => {
     className,
     feed,
     orders,
+    type,
+    updateOrder,
   } = props;
   return (
     <div id={id} className={className}>
       {orders[feed].map(order =>
-        <Order order={order} key={order.id}/>
+        <Order order={order} key={order.id} type={type} feed={feed} updateOrder={updateOrder}/>
       )}
     </div>
   );

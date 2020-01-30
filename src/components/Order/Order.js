@@ -3,11 +3,15 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
 import OrderInfo from '../OrderInfo';
+import OrderButtons from '../OrderButtons';
 import './Order.css';
 
 const Order = (props) => {
   const {
     order,
+    type,
+    feed,
+    updateOrder,
   } = props;
   /**
     * Determine order container classes:
@@ -62,15 +66,7 @@ const Order = (props) => {
           {order.kitchenTime ? <h3 className="order-customer time">{order.kitchenTime}</h3> : null }
           <h3 className="order-customer time target">{order.eta}</h3>
         </div>
-        {/*  make a ButtonGrp Component */}
-        <div className="buttons-container top">
-          <button className="order-button order-print bg-grey"><span className="fas fa-print"></span></button>
-          <button className="order-button order-complete bg-grey"><span className="fas fa-check"></span></button>
-          <button className="order-button order-undo bg-grey"><span className="fas fa-undo"></span></button>
-        </div>
-        <div className="buttons-container bottom">
-          <button className="order-button order-driver bg-grey"><span className="fas fa-motorcycle"></span></button>
-        </div>
+        <OrderButtons type={type} orderId={order.id} feed={feed} onClick={updateOrder}/>
       </div>
     </div>
   );

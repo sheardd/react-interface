@@ -23,6 +23,7 @@ class App extends Component {
     };
 
     this.switchFeed = this.switchFeed.bind(this);
+    this.updateOrder = this.updateOrder.bind(this);
     this.stop = this.stop.bind(this);
     this.restart = this.restart.bind(this);
   }
@@ -44,7 +45,9 @@ class App extends Component {
       restart={this.restart} >
         <FeedGrp
           orders={orders}
-          activeFeed={activeFeed} />
+          activeFeed={activeFeed}
+          type={type}
+          updateOrder={this.updateOrder} />
         <Location>{handle.toUpperCase()}</Location>
       </ Interface>
     );
@@ -52,6 +55,17 @@ class App extends Component {
 
   switchFeed(feed) {
     this.setState({activeFeed: feed});
+  }
+
+  updateOrder(args) {
+    const {
+      orderId,
+      action,
+      data,
+    } = args;
+    console.log(orderId,
+      action,
+      data,);
   }
 
   stop() {
