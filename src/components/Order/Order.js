@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
+import OrderInfo from '../OrderInfo';
 import './Order.css';
 
 const Order = (props) => {
@@ -10,9 +11,6 @@ const Order = (props) => {
   } = props;
   /**
     * Determine order container classes:
-    * - delivery/collection?
-    * - scheduled?
-    * - open?
     * - cancelled?
     */
   const orderClasses = classNames(
@@ -40,32 +38,22 @@ const Order = (props) => {
           </ul>
         </div>
         <div className="order-notes-container">
-          <p className="order-notes">
-            <span className="inline-title">Notes: </span>
-            <span className="order-value">{order.json.note}</span>
-          </p>
+          <OrderInfo className="order-notes" title="Notes">{order.json.note}</OrderInfo>
         </div>
         <div className="order-supplementary-container">
           <div className="order-info-container">
-          {/*  Component this bit (use for order-notes above) */}
-            <p className="order-customer name">
-              <span className="inline-title">Customer: </span>
-              <span className="order-value">
-                {order.customer.first_name} {order.customer.last_name}, {order.json.address}
-              </span>
-            </p>
-            <p className="order-customer number">
-              <span className="inline-title">Number: </span>
-              <span className="order-value">{order.billing_address.phone}</span>
-            </p>
-            <p className="order-customer placed">
-              <span className="inline-title">Placed At: </span>
-              <span className="order-value">{order.created_at_pretty}</span>
-            </p>
-            <p className="order-id shopify">
-              <span className="inline-title">Shopify ID: </span>
-              <span className="order-value">{order.order_number}</span>
-            </p>
+            <OrderInfo className="order-customer name" title="Customer">
+              {order.customer.first_name} {order.customer.last_name}, {order.json.address}
+            </OrderInfo>
+            <OrderInfo className="order-customer number" title="Number">
+              {order.billing_address.phone}
+            </OrderInfo>
+            <OrderInfo className="order-customer placed" title="Placed At">
+              {order.created_at_pretty}
+            </OrderInfo>
+            <OrderInfo className="order-customer shopify" title="Shopify ID">
+              {order.order_number}
+            </OrderInfo>
           </div>
         </div>
       </div>
