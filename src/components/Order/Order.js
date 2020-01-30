@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
-import OrderInfo from '../OrderInfo';
+import OrderInfoGrp from '../OrderInfoGrp';
 import OrderButtons from '../OrderButtons';
 import './Order.css';
 
@@ -41,27 +41,11 @@ const Order = (props) => {
             {/*  Order Items Loop */}
           </ul>
         </div>
-        <div className="order-supplementary-container">
-          <div className="order-info-container">
-            <OrderInfo className="order-notes" title="Notes">{order.json.note}</OrderInfo>
-            <OrderInfo className="order-customer name" title="Customer">
-              {order.customer.first_name} {order.customer.last_name}, {order.json.address}
-            </OrderInfo>
-            <OrderInfo className="order-customer number" title="Number">
-              {order.billing_address.phone}
-            </OrderInfo>
-            <OrderInfo className="order-customer placed" title="Placed At">
-              {order.created_at_pretty}
-            </OrderInfo>
-            <OrderInfo className="order-customer shopify" title="Shopify ID">
-              {order.order_number}
-            </OrderInfo>
-          </div>
-        </div>
+        <OrderInfoGrp order={order} />
       </div>
       <div className="order-sidebar">
         <div className="order-sidebar-info">
-          {order.kitchenTime ? <h3 className="order-customer time">{order.kitchenTime}</h3> : null }
+          {order.kitchenTime ? <h3 className="order-customer time">{order.kitchenTime}</h3> : null}
           <h3 className="order-customer time target">{order.eta}</h3>
         </div>
         <OrderButtons type={type} orderId={order.id} feed={feed} onClick={updateOrder}/>
