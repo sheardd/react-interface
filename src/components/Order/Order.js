@@ -59,7 +59,7 @@ const Order = (props) => {
       </div>
       <div className="order-sidebar">
         <div className="order-sidebar-info">
-          <h3 className="order-customer time">{order.kitchenTime}</h3>
+          {order.kitchenTime ? <h3 className="order-customer time">{order.kitchenTime}</h3> : null }
           <h3 className="order-customer time target">{order.eta}</h3>
         </div>
         {/*  make a ButtonGrp Component */}
