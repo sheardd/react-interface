@@ -41,11 +41,9 @@ const Order = (props) => {
             {/*  Order Items Loop */}
           </ul>
         </div>
-        <div className="order-notes-container">
-          <OrderInfo className="order-notes" title="Notes">{order.json.note}</OrderInfo>
-        </div>
         <div className="order-supplementary-container">
           <div className="order-info-container">
+            <OrderInfo className="order-notes" title="Notes">{order.json.note}</OrderInfo>
             <OrderInfo className="order-customer name" title="Customer">
               {order.customer.first_name} {order.customer.last_name}, {order.json.address}
             </OrderInfo>
