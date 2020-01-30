@@ -23,6 +23,7 @@ class App extends Component {
     };
 
     this.switchFeed = this.switchFeed.bind(this);
+    this.toggleOrder = this.toggleOrder.bind(this);
     this.updateOrder = this.updateOrder.bind(this);
     this.stop = this.stop.bind(this);
     this.restart = this.restart.bind(this);
@@ -47,6 +48,7 @@ class App extends Component {
           orders={orders}
           activeFeed={activeFeed}
           type={type}
+          toggleOrder={this.toggleOrder}
           updateOrder={this.updateOrder} />
         <Location>{handle.toUpperCase()}</Location>
       </ Interface>
@@ -55,6 +57,22 @@ class App extends Component {
 
   switchFeed(feed) {
     this.setState({activeFeed: feed});
+  }
+
+  toggleOrder(orderId, feed) {
+    const {orders} = this.state;
+    const {open, ...rest} = orders[feed][orderId];
+    const toggle = !open;
+    this.setState({orders: {
+      ...orders,
+      [feed]: {
+        ...orders[feed],
+        [orderId]: {
+          ...rest,
+          open: toggle
+        }
+      }
+    }});
   }
 
   updateOrder(args) {

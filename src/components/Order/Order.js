@@ -13,6 +13,7 @@ const Order = (props) => {
     order,
     type,
     feed,
+    toggleOrder,
     updateOrder,
   } = props;
   /**
@@ -32,7 +33,8 @@ const Order = (props) => {
     className={orderClasses}
     data-shopify={order.id}
     data-fulfill={order.fulfillments[0].id}
-    style={{order: order.position}}>
+    style={{order: order.position}}
+    onClick={() => toggleOrder(order.id, feed)}>
       <div className="order-inner">
         <OrderTopGrp order={order} type={type} />
         <OrderItems items={order.json.items} />
