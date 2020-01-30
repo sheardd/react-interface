@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
 import OrderTopGrp from '../OrderTopGrp';
+import OrderItems from '../OrderItems';
 import OrderBtmGrp from '../OrderBtmGrp';
 import OrderButtons from '../OrderButtons';
 import './Order.css';
@@ -34,11 +35,7 @@ const Order = (props) => {
     style={{order: order.position}}>
       <div className="order-inner">
         <OrderTopGrp order={order} type={type} />
-        <div className="order-items-container">
-          <ul className="order-items-list">
-            {/*  Order Items Loop */}
-          </ul>
-        </div>
+        <OrderItems items={order.json.items} />
         <OrderBtmGrp order={order} type={type}/>
       </div>
       <div className="order-sidebar">

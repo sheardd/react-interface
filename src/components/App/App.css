@@ -497,6 +497,8 @@
   margin-bottom: 9px;
 }
 #ep-interface .order-container .order-item-extras-list {
+  padding-inline-start: 0;
+  list-style: none;
   margin-inline-start: 10px;
   margin-block-start: 3px;
 }
