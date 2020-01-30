@@ -1,6 +1,7 @@
 const sampleOrders = {
-        open: [
-          {
+        open: {
+            index: ["2017847345257"],
+            2017847345257: {
     "id": 2017847345257,
     "email": "david.sheard@hotmail.com",
     "closed_at": null,
@@ -1835,8 +1836,10 @@ const sampleOrders = {
     "brkdwn": "5 ITEMS WITH A TOTAL OF 3 EXTRAS",
     "open": true,
 }
-        ],
-        other: []
+        },
+        other: {
+            index: [],
+        }
       };
 
 export default sampleOrders;
