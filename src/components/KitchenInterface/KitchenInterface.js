@@ -30,6 +30,8 @@ class KitchenInterface extends Component {
       handle,
       nonce,
       children,
+      stop,
+      restart,
     } = this.props;
     return (
       <div className={type} id="ep-interface">
@@ -39,7 +41,9 @@ class KitchenInterface extends Component {
           wait_time={wait.wait_time}
           activeFeed={activeFeed}
           switchFeed={switchFeed}
-          updateWaitTime={this.updateWaitTime} />
+          updateWaitTime={this.updateWaitTime}
+          stop={stop}
+          restart={restart} />
         {children}
         <Status />
         </div>
