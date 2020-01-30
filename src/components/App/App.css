@@ -470,12 +470,12 @@
   max-height: 120px;
   overflow: hidden; 
 }
-#ep-interface .order-container .order-type {
+#ep-interface .order-container .order-top-group {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
 }
-#ep-interface .order-container .order-type h3.packaging {
+#ep-interface .order-container .order-top-group h3.packaging {
   font-weight: 400;
   border-bottom: 2px solid;
   padding-bottom: 2px;
@@ -529,17 +529,17 @@
   width: 100%;
   margin-bottom: 10px;
 }
-#ep-interface .order-supplementary-container,
+#ep-interface .order-bottom-group,
 #ep-interface .order-notes-container {
   width: 100%;
 }
-#ep-interface .order-supplementary-container,
+#ep-interface .order-bottom-group,
 #ep-interface .order-notes-container,
 #ep-interface .buttons-container.bottom,
 #ep-interface.di .order-items-container {
   display: none;
 }
-#ep-interface .order-container.open .order-supplementary-container,
+#ep-interface .order-container.open .order-bottom-group,
 #ep-interface .order-container.open .buttons-container.bottom {
   display: flex;
 }
@@ -551,7 +551,7 @@
   margin-block-start: 0;
   margin-block-end: 0;
 }
-#ep-interface .order-supplementary-container {
+#ep-interface .order-bottom-group {
   margin-bottom: 25px;
   justify-content: space-between;
 }
@@ -577,11 +577,11 @@
   font-weight: bold;
   text-align: center;
 }
-#ep-interface.di .order-supplementary-container .buttons-container.bottom .order-revert,
-#ep-interface.di .order-container.closed .order-supplementary-container .buttons-container.bottom .order-complete {
+#ep-interface.di .order-bottom-group .buttons-container.bottom .order-revert,
+#ep-interface.di .order-container.closed .order-bottom-group .buttons-container.bottom .order-complete {
   display: none;
 }
-#ep-interface.di .order-container.closed .order-supplementary-container .buttons-container.bottom .order-revert{
+#ep-interface.di .order-container.closed .order-bottom-group .buttons-container.bottom .order-revert{
   display: flex;
 }
 /* Connection & Print Status for KI */

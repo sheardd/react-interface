@@ -8,7 +8,7 @@ const OrderInfo = ({
   children
 }) => 
   <p className={className}>
-    <span className="inline-title">{title}: </span>
+    <span className="inline-title">{title} </span>
     <span className="order-value">{children}</span>
   </p>
 
