@@ -21,6 +21,29 @@ class App extends Component {
       },
       activeFeed: "open",
       orders: sampleOrders,
+      popUps: {
+        menu: {
+          open: true,
+          id: "menu",
+          description: "Tap a heading to open, then tap items to hide them from the online menu. Items in red will be hidden upon updating.",
+        },
+        driver: {
+          open: false,
+          id: "driver",
+          description: "Tap a Driver's name, or unassign, then tap confirm.",
+        },
+        error: {
+          open: false,
+          id: "error",
+          description: false,
+          list: []
+        },
+        settle: {
+          open: false,
+          id: "settle",
+          description: "Definitely settle all orders? Orders will no longer be accessible once settled.",
+        },
+      }
     };
 
     this.switchActiveFeed = this.switchActiveFeed.bind(this);
@@ -33,7 +56,7 @@ class App extends Component {
 
   render() {
     const {type, handle, nonce, ajaxurl} = this.props;
-    const {wait, activeFeed, orders} = this.state;
+    const {wait, activeFeed, orders, popUps} = this.state;
     return (
       <Interface
       type={type}
@@ -41,6 +64,7 @@ class App extends Component {
       nonce={nonce}
       wait={wait}
       orders={orders}
+      popUps={popUps}
       ajaxurl={ajaxurl}
       activeFeed={activeFeed}
       switchActiveFeed={this.switchActiveFeed}

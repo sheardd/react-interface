@@ -2,28 +2,31 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
+import PopUp from '../PopUp';
 import Nav from '../Nav';
 import Status from '../Status';
 import './KitchenInterface.css';
+import sampleMenu from '../../sample-data/sampleMenu.js';
 
 class KitchenInterface extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      orders: props.orders,
+      menu: sampleMenu,
       wait: props.wait,
     };
-
     this.updateWaitTime = this.updateWaitTime.bind(this);
     this.waitTimeCallback = this.waitTimeCallback.bind(this);
+    this.checkForPopUp = this.checkForPopUp.bind(this);
   }
 
   render() {
     const {
+      menu,
       wait,
-      orders,
     } = this.state;
     const {
+      popUps,
       activeFeed,
       switchActiveFeed,
       type,
@@ -33,19 +36,27 @@ class KitchenInterface extends Component {
       stop,
       restart,
     } = this.props;
+    const openPup = this.checkForPopUp();
+
     return (
       <div className={type} id="ep-interface">
         <div id="ep-interface-inner">
-        <Nav
-          type={type}
-          wait_time={wait.wait_time}
-          activeFeed={activeFeed}
-          switchActiveFeed={switchActiveFeed}
-          updateWaitTime={this.updateWaitTime}
-          stop={stop}
-          restart={restart} />
-        {children}
-        <Status />
+        { openPup ?
+          <PopUp {...openPup} />
+        :
+          <>
+            <Nav
+              type={type}
+              wait_time={wait.wait_time}
+              activeFeed={activeFeed}
+              switchActiveFeed={switchActiveFeed}
+              updateWaitTime={this.updateWaitTime}
+              stop={stop}
+              restart={restart} />
+            {children}
+            <Status />
+          </>
+        }
         </div>
       </div>
     );
@@ -91,6 +102,23 @@ class KitchenInterface extends Component {
       wait_time: time
     }
     this.setState({wait: newWait});
+  }
+
+  checkForPopUp() {
+    const {popUps} = this.props;
+    const {menu} = this.state;
+    const keys = Object.keys(popUps);
+    let result = false;
+    for (let i = 0; i < keys.length; i++) {
+      if (popUps[keys[i]].open) {
+        result = popUps[keys[i]];
+        if (result.id === "menu") {
+          result.list = menu;
+        }
+        break;
+      }
+    }
+    return result;
   }
 }
 
