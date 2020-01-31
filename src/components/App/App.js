@@ -26,6 +26,7 @@ class App extends Component {
     this.switchFeed = this.switchFeed.bind(this);
     this.toggleOrder = this.toggleOrder.bind(this);
     this.updateOrder = this.updateOrder.bind(this);
+    this.moveOrder = this.moveOrder.bind(this);
     this.stop = this.stop.bind(this);
     this.restart = this.restart.bind(this);
   }
@@ -84,24 +85,31 @@ class App extends Component {
       feed,
       data,
     } = args;
-    const {orders} = this.state;
-    const {index, ...rest} = orders[feed];
-    const order = orders[feed][orderId];
-    const updtIndex = index.filter((id) => id !== orderId);
-    const updtFeed = omit(orders[feed], orderId.toString());
-    const newFeed = (feed => feed === "open" ? "other" : "open")(feed);
-    const newIndex = [...orders[newFeed].index, orderId];
+    if (action === "done" || action === "revert") {
+      this.moveOrder(orderId, feed);
+    }
+  }
 
-    this.setState({
-      orders: {
-        [feed]: {
-          ...updtFeed,
-          index: updtIndex,
-        },
-        [newFeed]: {
-          ...orders[newFeed],
-          index: newIndex,
-          [orderId]: order,
+  moveOrder(orderId, feed) {
+    this.setState((prevState) => {
+      const {orders} = prevState;
+      const {index} = orders[feed];
+      const order = orders[feed][orderId];
+      const updtdIndex = index.filter((id) => id !== orderId);
+      const updtdFeed = omit(orders[feed], orderId.toString());
+      const newFeed = (feed => feed === "open" ? "other" : "open")(feed);
+      const newIndex = [...orders[newFeed].index, orderId];
+      return {
+        orders: {
+          [feed]: {
+            ...updtdFeed,
+            index: updtdIndex,
+          },
+          [newFeed]: {
+            ...orders[newFeed],
+            index: newIndex,
+            [orderId]: order,
+          }
         }
       }
     });
