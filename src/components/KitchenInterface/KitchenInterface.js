@@ -25,7 +25,7 @@ class KitchenInterface extends Component {
     } = this.state;
     const {
       activeFeed,
-      switchFeed,
+      switchActiveFeed,
       type,
       handle,
       nonce,
@@ -40,7 +40,7 @@ class KitchenInterface extends Component {
           type={type}
           wait_time={wait.wait_time}
           activeFeed={activeFeed}
-          switchFeed={switchFeed}
+          switchActiveFeed={switchActiveFeed}
           updateWaitTime={this.updateWaitTime}
           stop={stop}
           restart={restart} />

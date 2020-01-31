@@ -23,7 +23,7 @@ class App extends Component {
       orders: sampleOrders,
     };
 
-    this.switchFeed = this.switchFeed.bind(this);
+    this.switchActiveFeed = this.switchActiveFeed.bind(this);
     this.toggleOrder = this.toggleOrder.bind(this);
     this.updateOrder = this.updateOrder.bind(this);
     this.moveOrder = this.moveOrder.bind(this);
@@ -43,7 +43,7 @@ class App extends Component {
       orders={orders}
       ajaxurl={ajaxurl}
       activeFeed={activeFeed}
-      switchFeed={this.switchFeed}
+      switchActiveFeed={this.switchActiveFeed}
       stop={this.stop}
       restart={this.restart} >
         <FeedGrp
@@ -57,7 +57,7 @@ class App extends Component {
     );
   }
 
-  switchFeed(feed) {
+  switchActiveFeed(feed) {
     this.setState({activeFeed: feed});
   }
 

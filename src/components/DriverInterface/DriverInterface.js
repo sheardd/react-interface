@@ -21,7 +21,7 @@ class DriverInterface extends Component {
     } = this.state;
     const {
       activeFeed,
-      switchFeed,
+      switchActiveFeed,
       type,
       handle,
       nonce,
@@ -33,7 +33,7 @@ class DriverInterface extends Component {
           <Nav
             type={type}
             activeFeed={activeFeed}
-            switchFeed={switchFeed} />
+            switchActiveFeed={switchActiveFeed} />
           {children}
         </div>
       </div>

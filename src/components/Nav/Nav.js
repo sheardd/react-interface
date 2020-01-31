@@ -10,7 +10,7 @@ const Nav = (props) => {
     type,
     wait_time,
     activeFeed,
-    switchFeed,
+    switchActiveFeed,
     updateWaitTime,
     stop,
     restart,
@@ -30,8 +30,8 @@ const Nav = (props) => {
         <nav>
           <Button id='int-nav-close' className='bg-grey' onClick={() => stop()}><span className='fas fa-times'></span></Button>
           <Button id='int-nav-refresh' className='bg-grey' onClick={() => restart()}><span className='fas fa-undo'></span></Button>
-          <Button className={openClasses} id='int-nav-filter-open' onClick={() => switchFeed("open")} >OPEN</Button>
-          <Button className={otherClasses} id='int-nav-filter-other' onClick={() => switchFeed("other")} >DONE</Button>
+          <Button className={openClasses} id='int-nav-filter-open' onClick={() => switchActiveFeed("open")} >OPEN</Button>
+          <Button className={otherClasses} id='int-nav-filter-other' onClick={() => switchActiveFeed("other")} >DONE</Button>
           <Button id='int-nav-menu' className='bg-grey'>MENU</Button>
           <span id='int-nav-wait' className='bg-grey wait-array'>
             <Button className='wait' value='0' onClick={() => updateWaitTime(0)}>+0</Button>
@@ -48,8 +48,8 @@ const Nav = (props) => {
         :
         <nav>
           <Button id="int-nav-close" className="bg-grey" onClick={() => stop()}><span className="fas fa-times"></span></Button>
-          <Button className={openClasses} id="int-nav-filter-open" onClick={() => switchFeed("open")} >OPEN</Button>
-          <Button className={otherClasses} id="int-nav-filter-other" onClick={() => switchFeed("other")} >PAID</Button>
+          <Button className={openClasses} id="int-nav-filter-open" onClick={() => switchActiveFeed("open")} >OPEN</Button>
+          <Button className={otherClasses} id="int-nav-filter-other" onClick={() => switchActiveFeed("other")} >PAID</Button>
           <Button className="bg-grey" id="int-nav-settle"><span className="fas fa-cash-register"></span></Button>
         </nav>
       }
