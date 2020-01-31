@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
 import Button from '../Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPrint, faCheck, faUndo, faMotorcycle } from '@fortawesome/free-solid-svg-icons'
 import './OrderButtons.css';
 
 const OrderButtons = ({type, orderId, feed, onClick}) => {
@@ -12,21 +14,21 @@ const OrderButtons = ({type, orderId, feed, onClick}) => {
         <>
         <div className="buttons-container top">
           <Button className="order-button order-print bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "print", feed: feed})} >
-            <span className="fas fa-print"></span>
+            <FontAwesomeIcon icon={faPrint} />
           </Button>
           {feed === "open" ?
             <Button className="order-button order-complete bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "done", feed: feed})} >
-              <span className="fas fa-check"></span>
+              <FontAwesomeIcon icon={faCheck} />
             </Button>
           :
             <Button className="order-button order-undo bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "revert", feed: feed})} >
-              <span className="fas fa-undo"></span>
+              <FontAwesomeIcon icon={faUndo} />
             </Button>
           }
         </div>
         <div className="buttons-container bottom">
           <Button className="order-button order-driver bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "driver", feed: feed})} >
-            <span className="fas fa-motorcycle"></span>
+            <FontAwesomeIcon icon={faMotorcycle} />
           </Button>
         </div>
         </>
@@ -34,11 +36,11 @@ const OrderButtons = ({type, orderId, feed, onClick}) => {
         <div className="buttons-container bottom">
           {feed === "open" ?
             <Button className="order-button order-complete bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "done", feed: feed})} >
-              <span className="fas fa-check"></span>
+              <FontAwesomeIcon icon={faCheck} />
             </Button>
           :
             <Button className="order-button order-undo bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "revert", feed: feed})} >
-              <span className="fas fa-undo"></span>
+              <FontAwesomeIcon icon={faUndo} />
             </Button>
           }
         </div>

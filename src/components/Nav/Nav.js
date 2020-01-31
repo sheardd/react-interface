@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
 import Button from '../Button'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes, faUndo, faCashRegister} from '@fortawesome/free-solid-svg-icons'
 import './Nav.css';
 
 const Nav = (props) => {
@@ -28,8 +30,12 @@ const Nav = (props) => {
       {
         type === "ki" ?
         <nav>
-          <Button id='int-nav-close' className='bg-grey' onClick={() => stop()}><span className='fas fa-times'></span></Button>
-          <Button id='int-nav-refresh' className='bg-grey' onClick={() => restart()}><span className='fas fa-undo'></span></Button>
+          <Button id='int-nav-close' className='bg-grey' onClick={() => stop()}>
+            <FontAwesomeIcon icon={faTimes} />
+          </Button>
+          <Button id='int-nav-refresh' className='bg-grey' onClick={() => restart()}>
+            <FontAwesomeIcon icon={faUndo} />
+          </Button>
           <Button className={openClasses} id='int-nav-filter-open' onClick={() => switchActiveFeed("open")} >OPEN</Button>
           <Button className={otherClasses} id='int-nav-filter-other' onClick={() => switchActiveFeed("other")} >DONE</Button>
           <Button id='int-nav-menu' className='bg-grey'>MENU</Button>
@@ -47,10 +53,14 @@ const Nav = (props) => {
           </nav>
         :
         <nav>
-          <Button id="int-nav-close" className="bg-grey" onClick={() => stop()}><span className="fas fa-times"></span></Button>
+          <Button id="int-nav-close" className="bg-grey" onClick={() => stop()}>
+            <FontAwesomeIcon icon={faTimes} />
+          </Button>
           <Button className={openClasses} id="int-nav-filter-open" onClick={() => switchActiveFeed("open")} >OPEN</Button>
           <Button className={otherClasses} id="int-nav-filter-other" onClick={() => switchActiveFeed("other")} >PAID</Button>
-          <Button className="bg-grey" id="int-nav-settle"><span className="fas fa-cash-register"></span></Button>
+          <Button className="bg-grey" id="int-nav-settle">
+            <FontAwesomeIcon icon={faCashRegister} />
+          </Button>
         </nav>
       }
     </div>
