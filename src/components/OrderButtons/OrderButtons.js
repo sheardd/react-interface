@@ -11,21 +11,21 @@ const OrderButtons = ({type, orderId, feed, onClick}) => {
       {type === "ki" ?
         <>
         <div className="buttons-container top">
-          <Button className="order-button order-print bg-grey" onClick={() => onClick({orderId: orderId, action: "print"})} >
+          <Button className="order-button order-print bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "print", feed: feed})} >
             <span className="fas fa-print"></span>
           </Button>
           {feed === "open" ?
-            <Button className="order-button order-complete bg-grey" onClick={() => onClick({orderId: orderId, action: "done"})} >
+            <Button className="order-button order-complete bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "done", feed: feed})} >
               <span className="fas fa-check"></span>
             </Button>
           :
-            <Button className="order-button order-undo bg-grey" onClick={() => onClick({orderId: orderId, action: "revert"})} >
+            <Button className="order-button order-undo bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "revert", feed: feed})} >
               <span className="fas fa-undo"></span>
             </Button>
           }
         </div>
         <div className="buttons-container bottom">
-          <Button className="order-button order-driver bg-grey" onClick={() => onClick({orderId: orderId, action: "driver"})} >
+          <Button className="order-button order-driver bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "driver", feed: feed})} >
             <span className="fas fa-motorcycle"></span>
           </Button>
         </div>
@@ -33,11 +33,11 @@ const OrderButtons = ({type, orderId, feed, onClick}) => {
       :
         <div className="buttons-container bottom">
           {feed === "open" ?
-            <Button className="order-button order-complete bg-grey" onClick={() => onClick({orderId: orderId, action: "done"})} >
+            <Button className="order-button order-complete bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "done", feed: feed})} >
               <span className="fas fa-check"></span>
             </Button>
           :
-            <Button className="order-button order-undo bg-grey" onClick={() => onClick({orderId: orderId, action: "revert"})} >
+            <Button className="order-button order-undo bg-grey" onClick={(e) => onClick(e, {orderId: orderId, action: "revert", feed: feed})} >
               <span className="fas fa-undo"></span>
             </Button>
           }

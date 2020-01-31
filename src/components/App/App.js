@@ -75,15 +75,39 @@ class App extends Component {
     }});
   }
 
-  updateOrder(args) {
+  updateOrder(e, args) {
+    e.stopPropagation();
     const {
       orderId,
       action,
+      feed,
       data,
     } = args;
-    console.log(orderId,
-      action,
-      data,);
+    const {orders} = this.state;
+    const {index, ...rest} = orders[feed];
+    const order = orders[feed][orderId];
+    const newFeed = (feed => feed === "open" ? "other" : "open")(feed);
+    const removeId = id => id !== orderId;
+    const updatedIndex = index.filter(removeId);
+    const newIndex = [...orders[newFeed].index, orderId];
+    
+     // Currently broken, we need to install lodash or similar to use for Deep cloning our order objects
+     // * (it looks like we'll currently have to rebuild the feed object we're removing the order from from scratch,
+     // * minus the one order we're trying to remove, remembering to remove the orderId from its index when doing so)
+    
+    this.setState({
+      orders: {
+        [feed]: {
+          ...orders[feed],
+          index: updatedIndex,
+        },
+        [newFeed]: {
+          ...orders[newFeed],
+          index: newIndex,
+          [orderId]: order,
+        }
+      }
+    });
   }
 
   stop() {
