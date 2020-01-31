@@ -26,6 +26,7 @@ class DriverInterface extends Component {
       handle,
       nonce,
       children,
+      stop,
     } = this.props;
     return (
       <div className={type} id="ep-interface">
@@ -33,7 +34,8 @@ class DriverInterface extends Component {
           <Nav
             type={type}
             activeFeed={activeFeed}
-            switchActiveFeed={switchActiveFeed} />
+            switchActiveFeed={switchActiveFeed}
+            stop={stop} />
           {children}
         </div>
       </div>
