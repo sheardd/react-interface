@@ -12,7 +12,7 @@ const FeedGrp = ({activeFeed, ...rest}) => {
   );
   const otherClasses = classNames(
     "order-feed",
-    {"other": activeFeed === "other"}
+    {"open": activeFeed === "other"}
   );
   return (
     <div id="order-feeds">
