@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { omit } from 'lodash';
 import classNames from 'classnames';
 import Interface from '../Interface';
 import FeedGrp from '../FeedGrp';
@@ -86,20 +87,16 @@ class App extends Component {
     const {orders} = this.state;
     const {index, ...rest} = orders[feed];
     const order = orders[feed][orderId];
+    const updtIndex = index.filter((id) => id !== orderId);
+    const updtFeed = omit(orders[feed], orderId.toString());
     const newFeed = (feed => feed === "open" ? "other" : "open")(feed);
-    const removeId = id => id !== orderId;
-    const updatedIndex = index.filter(removeId);
     const newIndex = [...orders[newFeed].index, orderId];
-    
-     // Currently broken, we need to install lodash or similar to use for Deep cloning our order objects
-     // * (it looks like we'll currently have to rebuild the feed object we're removing the order from from scratch,
-     // * minus the one order we're trying to remove, remembering to remove the orderId from its index when doing so)
-    
+
     this.setState({
       orders: {
         [feed]: {
-          ...orders[feed],
-          index: updatedIndex,
+          ...updtFeed,
+          index: updtIndex,
         },
         [newFeed]: {
           ...orders[newFeed],
