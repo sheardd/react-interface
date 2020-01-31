@@ -1,6 +1,6 @@
 const sampleOrders = {
         open: {
-            index: ["2017847345257"],
+            index: [2017847345257],
             2017847345257: {
     "id": 2017847345257,
     "email": "david.sheard@hotmail.com",
