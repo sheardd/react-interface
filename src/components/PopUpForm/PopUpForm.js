@@ -20,7 +20,7 @@ const PopUpForm = ({id, description, list}) =>
     <input type="hidden" name="driver-assign-shopify" id="driver-assign-shopify" value={list.current} />
   }
   <div className="btn-row">
-    <Button className="submit-button update">Update</Button>
+    <Button className="submit-button update">{id === "error" ? "Clear Log" : "Update"}</Button>
     <Button className="submit-button cancel">Cancel</Button>
   </div>
 </form>
