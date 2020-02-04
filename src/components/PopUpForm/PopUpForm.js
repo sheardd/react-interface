@@ -7,7 +7,7 @@ import Button from '../Button';
 import './PopUpForm.css';
 
 const PopUpForm = ({id, description, list}) =>
-<form id={id + "-form"}>
+<form id={id + "-form"} className="pop-up-form">
   <p>{description}</p>
   {list ?
     <PopUpFormList id={id} list={list} />

@@ -7,7 +7,7 @@ import './PopUp.css';
 
 const PopUp = ({id, description, list}) =>
   <div id={id} className="pop-up bg-grey">
-    <div id={id + "-inner"}>
+    <div id={id + "-inner"} className="pop-up-inner">
       <PopUpForm id={id} description={description} list={list} />
     </div>
   </div>
