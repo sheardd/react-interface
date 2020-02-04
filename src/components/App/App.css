@@ -159,7 +159,7 @@
   color: #fefefe;
 }
 #ep-interface.ki #menu,
-#ep-interface.ki #driver-assign,
+#ep-interface.ki #driver,
 #ep-interface.ki #error-container {
   display: flex;
   width: 100%;
@@ -167,12 +167,12 @@
   color: #444;
 }
 /*#ep-interface.ki #menu.open,
-#ep-interface.ki #driver-assign.open,
+#ep-interface.ki #driver.open,
 #ep-interface.ki #error-container.open {
   display: flex;
 }*/
 #ep-interface.ki #menu #menu-inner,
-#ep-interface.ki #driver-assign #driver-assign-inner,
+#ep-interface.ki #driver #driver-inner,
 #ep-interface.ki #error-container #error-inner {
   width: 90%;
   height: 90%;
@@ -181,68 +181,76 @@
 #ep-interface.ki #menu #menu-list,
 #ep-interface.ki #menu #menu-form > *,
 #ep-interface.ki #menu .pop-up-li,
-#ep-interface.ki #driver-assign #driver-assign-form,
-#ep-interface.ki #driver-assign #driver-assign-list,
-#ep-interface.ki #driver-assign #driver-assign-form > *,
-#ep-interface.ki #driver-assign .pop-up-li,
+#ep-interface.ki #driver #driver-form,
+#ep-interface.ki #driver #driver-list,
+#ep-interface.ki #driver #driver-form > *,
+#ep-interface.ki #driver .pop-up-li,
 #ep-interface.ki #error-container #error-list {
   width: 100%;
 }
 #ep-interface.ki #menu #menu-form,
 #ep-interface.ki #menu #menu-list,
-#ep-interface.ki #driver-assign #driver-assign-form,
-#ep-interface.ki #driver-assign #driver-assign-list,
+#ep-interface.ki #driver #driver-form,
+#ep-interface.ki #driver #driver-list,
 #ep-interface.ki .btn-row {
   display: flex;
   flex-wrap: wrap;
 }
 #ep-interface.ki #menu #menu-form > p,
-#ep-interface.ki #driver-assign #driver-assign-form > p,
+#ep-interface.ki #driver #driver-form > p,
 #ep-interface.ki .submit-button,
 #ep-interface.ki #error-container p,
 #ep-interface.ki #error-container li {
   font-size: 1.8em;
 }
-#ep-interface.ki #menu #menu-list,
-#ep-interface.ki #menu .pop-up-collection-list {
+#ep-interface.ki .pop-up .pop-up-ul {
   list-style: none;
   padding-inline-start:0;
 }
 #ep-interface.ki #menu #menu-form > p.pls-wait-msg,
-#ep-interface.ki #driver-assign #driver-assign-form > p.pls-wait-msg {
+#ep-interface.ki #driver #driver-form > p.pls-wait-msg {
   text-align: center;
 }
-#ep-interface.ki #driver-assign #driver-assign-form > p.pls-wait-msg.hide {
+#ep-interface.ki #driver #driver-form > p.pls-wait-msg.hide {
   display: none;
 }
 #ep-interface.ki #menu .pop-up-li,
-#ep-interface.ki #driver-assign .pop-up-li,
+#ep-interface.ki #driver .pop-up-li,
 #ep-interface.ki .submit-button {
   box-sizing: border-box;
   border: 1px solid #323232;
 }
+#ep-interface.ki #menu .pop-up-li,
+#ep-interface.ki #driver .pop-up-li {
+  margin-bottom: 6px;
+}
 #ep-interface.ki #menu .pop-up-li h3,
-#ep-interface.ki #driver-assign .pop-up-li h3,
+#ep-interface.ki #driver .pop-up-li h3,
 #ep-interface.ki .submit-button {
   text-align: center;
 }
 #ep-interface.ki #menu .pop-up-li h3,
-#ep-interface.ki #driver-assign .pop-up-li h3 {
+#ep-interface.ki #driver .pop-up-li h3 {
   margin-bottom: 0;
 }
-#ep-interface.ki #menu .pop-up-li-component label,
-#ep-interface.ki #driver-assign .pop-up-li-component > label {
+#ep-interface.ki #menu .pop-up-ul .pop-up-li label,
+#ep-interface.ki #driver .pop-up-ul .pop-up-li label {
+  display: inline-block;
   width: 100%;
+  padding: 1em 0;
+  box-sizing: border-box;
+}
+#ep-interface.ki #menu .pop-up-ul .pop-up-collection-li label,
+#ep-interface.ki #driver .pop-up-ul .pop-up-collection-li label {
   height: 100%;
   box-sizing: border-box;
-  padding: 1em 0;
-  display: block;
+  padding: 0;
 }
 #ep-interface.ki #menu #menu-list .collection-check,
 #ep-interface.ki #menu .pop-up-li input.collection-check
 + ul.pop-up-ul, #ep-interface.ki #menu .pop-up-ul
 .pop-up-li input[type='checkbox'],
-#ep-interface.ki #driver-assign .pop-up-li input[type='radio']  {
+#ep-interface.ki #driver .pop-up-li input[type='radio']  {
   display: none;
 }
 #ep-interface.ki #menu .pop-up-li ul.pop-up-collection-list {
@@ -255,15 +263,9 @@
   box-sizing: border-box;
 }
 #ep-interface.ki #menu .pop-up-collection-list .pop-up-collection-li,
-#ep-interface.ki #driver-assign .pop-up-ul .pop-up-li {
+#ep-interface.ki #driver .pop-up-ul .pop-up-li {
   margin: 0;
   border: 1px solid #323232;
-}
-#ep-interface.ki #menu .pop-up-ul .pop-up-li,
-#ep-interface.ki #driver-assign .pop-up-ul .pop-up-li {
-  display: inline-block;
-  width: 100%;
-  box-sizing: border-box;
 }
 #ep-interface.ki #menu .pop-up-collection-list .pop-up-collection-li label {
   background-color: red;
@@ -273,11 +275,11 @@
   background-color: initial;
   color: #444;
 }
-#ep-interface.ki #driver-assign .pop-up-li input:checked + label {
+#ep-interface.ki #driver .pop-up-li input:checked + label {
   background-color: #31ff00;
 }
 #ep-interface.ki #menu .pop-up-ul .pop-up-li label p,
-#ep-interface.ki #driver-assign .pop-up-ul .pop-up-li label p {
+#ep-interface.ki #driver .pop-up-ul .pop-up-li label p {
   margin: 1em;
 }
 #ep-interface.ki .submit-button {
