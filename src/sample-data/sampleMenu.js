@@ -8,7 +8,7 @@ const sampleMenu = {
         "utility"
     ],
     "dips": {
-        "keys": [
+        "index": [
             "4097423245417",
             "4097423474793",
             "4097423933545"
@@ -33,7 +33,7 @@ const sampleMenu = {
         }
     },
     "extras": {
-        "keys": [
+        "index": [
             "4097424883817",
             "4097424752745",
             "4097424654441",
@@ -177,7 +177,7 @@ const sampleMenu = {
         }
     },
     "hidden": {
-        "keys": [
+        "index": [
             "4097423245417"
         ],
         "4097423245417": {
@@ -188,7 +188,7 @@ const sampleMenu = {
         }
     },
     "non-tomato-base-pizza": {
-        "keys": [
+        "index": [
             "4097423081577",
             "4097423868009"
         ],
@@ -206,7 +206,7 @@ const sampleMenu = {
         }
     },
     "pizzas": {
-        "keys": [
+        "index": [
             "4097424523369",
             "4097423409257",
             "4097424097385",
@@ -266,7 +266,7 @@ const sampleMenu = {
         }
     },
     "starters-salads": {
-        "keys": [
+        "index": [
             "4097422819433",
             "4097422884969",
             "4097423147113",
@@ -326,7 +326,7 @@ const sampleMenu = {
         }
     },
     "utility": {
-        "keys": [
+        "index": [
             "4097424982121",
             "4375858610281"
         ],
