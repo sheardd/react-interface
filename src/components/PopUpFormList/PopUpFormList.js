@@ -11,12 +11,12 @@ const PopUpFormList = ({id, list}) =>
       i => {
         const item = id === "driver" ? i : list[i];
         return(
-            <PopUpFormListItem key={i} context={id} item={item} i={i} hidden={list["hidden"]}></PopUpFormListItem>
+          <PopUpFormListItem key={i} context={id} item={item} i={i} hidden={list["hidden"]}/>
         );
       }
     )}
     {id === "driver" ?
-      <PopUpFormListItem key="unassign" context="unassign" item="unassign" i="unassign" hidden={false}></PopUpFormListItem>
+      <PopUpFormListItem key="unassign" context="unassign" item="unassign" i="unassign" hidden={false}/>
     :
       null
     }
