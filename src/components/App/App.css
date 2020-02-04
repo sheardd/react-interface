@@ -220,8 +220,7 @@
   box-sizing: border-box;
   border: 1px solid #323232;
 }
-#ep-interface.ki #menu .pop-up-li,
-#ep-interface.ki #driver .pop-up-li {
+#ep-interface.ki .pop-up .pop-up-li {
   margin-bottom: 6px;
 }
 #ep-interface.ki #menu .pop-up-li h3,
@@ -262,8 +261,7 @@
   width: 50%;
   box-sizing: border-box;
 }
-#ep-interface.ki #menu .pop-up-collection-list .pop-up-collection-li,
-#ep-interface.ki #driver .pop-up-ul .pop-up-li {
+#ep-interface.ki .pop-up .pop-up-collection-list .pop-up-collection-li {
   margin: 0;
   border: 1px solid #323232;
 }
