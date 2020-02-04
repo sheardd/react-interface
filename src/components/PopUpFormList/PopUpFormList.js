@@ -6,12 +6,12 @@ import PopUpFormListItem from '../PopUpFormListItem';
 import './PopUpFormList.css';
 
 const PopUpFormList = ({id, list}) =>
-  <ul id={id + "-list"}>
-    {list.index.map(
-      item => {
-        const i = list[item];
+  <ul id={id + "-list"} className="pop-up-ul">
+    {list.index.filter(i => i !== "hidden").map(
+      i => {
+        const item = list[i];
         return(
-          <PopUpFormListItem key={item} {...i}>{item}</PopUpFormListItem>
+            <PopUpFormListItem key={i} context={id} item={item} i={i} hidden={list["hidden"]}></PopUpFormListItem>
         );
       }
     )}
