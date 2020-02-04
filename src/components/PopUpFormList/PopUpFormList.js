@@ -15,6 +15,11 @@ const PopUpFormList = ({id, list}) =>
         );
       }
     )}
+    {id === "driver" ?
+      <PopUpFormListItem key="unassign" context="unassign" item="unassign" i="unassign" hidden={false}></PopUpFormListItem>
+    :
+      null
+    }
   </ul>
 
 export default PopUpFormList;
