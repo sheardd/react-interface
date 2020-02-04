@@ -6,15 +6,18 @@ import PopUpFormList from '../PopUpFormList';
 import Button from '../Button';
 import './PopUpForm.css';
 
-const PopUpForm = ({id, description, list, orderId}) =>
+const PopUpForm = ({id, description, list}) =>
 <form id={id + "-form"}>
   <p>{description}</p>
-  <p className="pls-wait-msg">Fetching data, please wait...</p>
-  
-  <PopUpFormList id={id} list={list} />
+  {list ?
+    <PopUpFormList id={id} list={list} />
+  :
+    <p className="pls-wait-msg">Fetching data, please wait...</p>
+  }
 
-  {orderId &&
-  	<input type="hidden" name="driver-assign-shopify" id="driver-assign-shopify" value={orderId} />
+
+  {list.current &&
+    <input type="hidden" name="driver-assign-shopify" id="driver-assign-shopify" value={list.current} />
   }
   <div className="btn-row">
     <Button className="submit-button update">Update</Button>

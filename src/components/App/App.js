@@ -23,12 +23,12 @@ class App extends Component {
       orders: sampleOrders,
       popUps: {
         menu: {
-          open: true,
+          open: false,
           id: "menu",
           description: "Tap a heading to open, then tap items to hide them from the online menu. Items in red will be hidden upon updating.",
         },
         driver: {
-          open: false,
+          open: true,
           id: "driver",
           description: "Tap a Driver's name, or unassign, then tap confirm.",
         },

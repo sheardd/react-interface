@@ -7,18 +7,9 @@ import './PopUpFormListItem.css';
 
 const PopUpFormListItem = ({context, item, i, hidden}) =>
   <li className="pop-up-li">
+    <label><h3 className="pop-up-li-title">{i.toUpperCase()}</h3></label>
     {context === "menu" ?
-      <PopUpCollection collection={item} title={i} hidden={hidden}/>
-    :
-      null
-    }
-    {context === "driver" ?
-      <label><h3 className="pop-up-li-title">{item}</h3></label>
-    :
-      null
-    }
-    {context === "error" ?
-      <label><h3 className="pop-up-li-title">{item}</h3></label>
+      <PopUpCollection collection={item} hidden={hidden}/>
     :
       null
     }

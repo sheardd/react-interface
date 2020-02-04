@@ -7,12 +7,14 @@ import Nav from '../Nav';
 import Status from '../Status';
 import './KitchenInterface.css';
 import sampleMenu from '../../sample-data/sampleMenu.js';
+import sampleDriver from '../../sample-data/sampleDriver.js';
 
 class KitchenInterface extends Component {
   constructor(props) {
     super(props);
     this.state = {
       menu: sampleMenu,
+      driver: sampleDriver,
       wait: props.wait,
     };
     this.updateWaitTime = this.updateWaitTime.bind(this);
@@ -106,7 +108,7 @@ class KitchenInterface extends Component {
 
   checkForPopUp() {
     const {popUps} = this.props;
-    const {menu} = this.state;
+    const {menu, driver} = this.state;
     const keys = Object.keys(popUps);
     let result = false;
     for (let i = 0; i < keys.length; i++) {
@@ -114,6 +116,8 @@ class KitchenInterface extends Component {
         result = popUps[keys[i]];
         if (result.id === "menu") {
           result.list = menu;
+        } else if (result.id === "driver") {
+          result.list = driver;
         }
         break;
       }

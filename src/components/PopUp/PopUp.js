@@ -5,10 +5,10 @@ import classNames from 'classnames';
 import PopUpForm from '../PopUpForm';
 import './PopUp.css';
 
-const PopUp = ({id, description, list, orderId}) =>
+const PopUp = ({id, description, list}) =>
   <div id={id} className="pop-up bg-grey">
     <div id={id + "-inner"}>
-      <PopUpForm id={id} description={description} list={list} orderId={orderId} />
+      <PopUpForm id={id} description={description} list={list} />
     </div>
   </div>
 

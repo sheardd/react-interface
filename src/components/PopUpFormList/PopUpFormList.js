@@ -9,7 +9,7 @@ const PopUpFormList = ({id, list}) =>
   <ul id={id + "-list"} className="pop-up-ul">
     {list.index.filter(i => i !== "hidden").map(
       i => {
-        const item = list[i];
+        const item = id === "driver" ? i : list[i];
         return(
             <PopUpFormListItem key={i} context={id} item={item} i={i} hidden={list["hidden"]}></PopUpFormListItem>
         );
