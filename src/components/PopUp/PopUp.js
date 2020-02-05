@@ -1,15 +1,47 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
 import PopUpForm from '../PopUpForm';
 import './PopUp.css';
 
-const PopUp = ({popup, togglePup}) =>
-  <div id={popup.id} className="pop-up bg-grey">
-    <div id={popup.id + "-inner"} className="pop-up-inner">
-      <PopUpForm id={popup.id} description={popup.description} list={popup.list} togglePup={togglePup}/>
-    </div>
-  </div>
+class popUp extends Component {
+  constructor(props) {
+    super(props);
+    const {popUp} = this.props;
+    this.stateToSet = this.stateToSet.bind(this);
+    const stateToSet = this.stateToSet(popUp.id);
+    if (stateToSet) {
+      this.state = {
+      	[popUp.id]: stateToSet,
+      };
+    }
+  }
+  render() {
+  	const {popUp, togglePup} = this.props;
+  	console.log(this.state);
+  	return(
+      <div id={popUp.id} className="pop-up bg-grey">
+        <div id={popUp.id + "-inner"} className="pop-up-inner">
+          <PopUpForm id={popUp.id} description={popUp.description} list={popUp.list} togglePup={togglePup}/>
+        </div>
+      </div>
+    );
+  }
 
-export default PopUp;
+  stateToSet(context) {
+    if (context === "menu") {
+      return {
+        "candidates": {
+          index: [],
+        }
+      };
+    } else if (context === "driver") {
+      return {"driver": ""};
+    } else {
+      return false;
+    }
+  }
+}
+
+export default popUp;

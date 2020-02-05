@@ -47,7 +47,7 @@ class KitchenInterface extends Component {
       <div className={type} id="ep-interface">
         <div id="ep-interface-inner">
         { pupIsOpen ?
-          <PopUp popup={pupIsOpen} togglePup={togglePup}/>
+          <PopUp popUp={pupIsOpen} togglePup={togglePup}/>
         :
           <>
             <Nav
