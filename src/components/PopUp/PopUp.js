@@ -13,13 +13,12 @@ class popUp extends Component {
     const stateToSet = this.stateToSet(popUp.id);
     if (stateToSet) {
       this.state = {
-      	[popUp.id]: stateToSet,
+      	data: stateToSet,
       };
     }
   }
   render() {
   	const {popUp, togglePup} = this.props;
-  	console.log(this.state);
   	return(
       <div id={popUp.id} className="pop-up bg-grey">
         <div id={popUp.id + "-inner"} className="pop-up-inner">
