@@ -37,7 +37,7 @@ class KitchenInterface extends Component {
       handle,
       nonce,
       children,
-      openPup,
+      togglePup,
       stop,
       restart,
     } = this.props;
@@ -47,7 +47,7 @@ class KitchenInterface extends Component {
       <div className={type} id="ep-interface">
         <div id="ep-interface-inner">
         { pupIsOpen ?
-          <PopUp {...pupIsOpen} />
+          <PopUp popup={pupIsOpen} togglePup={togglePup}/>
         :
           <>
             <Nav
@@ -56,11 +56,11 @@ class KitchenInterface extends Component {
               activeFeed={activeFeed}
               switchActiveFeed={switchActiveFeed}
               updateWaitTime={this.updateWaitTime}
-              openPup={openPup}
+              togglePup={togglePup}
               stop={stop}
               restart={restart} />
             {children}
-            <Status openPup={openPup}/>
+            <Status togglePup={togglePup}/>
           </>
         }
         </div>

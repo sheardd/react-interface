@@ -50,7 +50,7 @@ class App extends Component {
     this.toggleOrder = this.toggleOrder.bind(this);
     this.updateOrder = this.updateOrder.bind(this);
     this.moveOrder = this.moveOrder.bind(this);
-    this.openPup = this.openPup.bind(this);
+    this.togglePup = this.togglePup.bind(this);
     this.stop = this.stop.bind(this);
     this.restart = this.restart.bind(this);
   }
@@ -69,7 +69,7 @@ class App extends Component {
       ajaxurl={ajaxurl}
       activeFeed={activeFeed}
       switchActiveFeed={this.switchActiveFeed}
-      openPup={this.openPup}
+      togglePup={this.togglePup}
       stop={this.stop}
       restart={this.restart} >
         <FeedGrp
@@ -78,7 +78,7 @@ class App extends Component {
           type={type}
           toggleOrder={this.toggleOrder}
           updateOrder={this.updateOrder}
-          openPup={this.openPup} />
+          togglePup={this.togglePup} />
         <Location>{handle.toUpperCase()}</Location>
       </ Interface>
     );
@@ -120,7 +120,7 @@ class App extends Component {
 
   /**
     * Apparently lodash 5 will drop support for omit, come up with a new
-    * solution using the keys/reduce method adopted in openPup below.
+    * solution using the keys/reduce method adopted in togglePup below.
     */
 
   moveOrder(orderId, feed) {
@@ -148,7 +148,7 @@ class App extends Component {
     });
   }
 
-  openPup(pup) {
+  togglePup(pup = false) {
     this.setState((prevState) => {
       const {popUps} = prevState;
       const updtdPups = Object.keys(popUps).reduce((obj, key) => {

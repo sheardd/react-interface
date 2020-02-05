@@ -6,7 +6,7 @@ import PopUpFormList from '../PopUpFormList';
 import Button from '../Button';
 import './PopUpForm.css';
 
-const PopUpForm = ({id, description, list}) =>
+const PopUpForm = ({id, description, list, togglePup}) =>
 <form id={id + "-form"} className="pop-up-form">
   <p>{description}</p>
   {list ?
@@ -21,7 +21,7 @@ const PopUpForm = ({id, description, list}) =>
   }
   <div className="btn-row">
     <Button className="submit-button update">{id === "error" ? "Clear Log" : "Update"}</Button>
-    <Button className="submit-button cancel">Cancel</Button>
+    <Button className="submit-button cancel" onClick={(e) => {e.stopPropagation(); togglePup()}}>Cancel</Button>
   </div>
 </form>
 

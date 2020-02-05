@@ -14,14 +14,14 @@ const Feed = (props) => {
     type,
     toggleOrder,
     updateOrder,
-    openPup,
+    togglePup,
   } = props;
   return (
     <div id={id} className={className}>
       {orders[feed].index.map(orderId => {
         const order = orders[feed][orderId];
         return(
-          <Order order={order} key={orderId} type={type} feed={feed} toggleOrder={toggleOrder} updateOrder={updateOrder} openPup={openPup}/>
+          <Order order={order} key={orderId} type={type} feed={feed} toggleOrder={toggleOrder} updateOrder={updateOrder} togglePup={togglePup}/>
         );
       })}
     </div>
