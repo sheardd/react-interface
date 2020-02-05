@@ -15,6 +15,7 @@ const Order = (props) => {
     feed,
     toggleOrder,
     updateOrder,
+    openPup,
   } = props;
   /**
     * Determine order container classes:
@@ -45,7 +46,7 @@ const Order = (props) => {
           {order.kitchenTime ? <h3 className="order-customer time">{order.kitchenTime}</h3> : null }
           <h3 className="order-customer time target">{order.eta}</h3>
         </div>
-        <OrderButtons type={type} orderId={order.id} feed={feed} onClick={updateOrder} />
+        <OrderButtons type={type} orderId={order.id} feed={feed} onTick={updateOrder} onDriver={openPup}/>
       </div>
     </div>
   );

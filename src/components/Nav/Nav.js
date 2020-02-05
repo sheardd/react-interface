@@ -14,6 +14,7 @@ const Nav = (props) => {
     activeFeed,
     switchActiveFeed,
     updateWaitTime,
+    openPup,
     stop,
     restart,
   } = props;
@@ -38,7 +39,7 @@ const Nav = (props) => {
           </Button>
           <Button className={openClasses} id='int-nav-filter-open' onClick={() => switchActiveFeed("open")} >OPEN</Button>
           <Button className={otherClasses} id='int-nav-filter-other' onClick={() => switchActiveFeed("other")} >DONE</Button>
-          <Button id='int-nav-menu' className='bg-grey'>MENU</Button>
+          <Button id='int-nav-menu' className='bg-grey' onClick={() => openPup("menu")}>MENU</Button>
           <span id='int-nav-wait' className='bg-grey wait-array'>
             <Button className='wait' value='0' onClick={() => updateWaitTime(0)}>+0</Button>
             <Button className='wait' value='20' onClick={() => updateWaitTime(20)}>+20</Button>

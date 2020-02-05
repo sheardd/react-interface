@@ -21,7 +21,7 @@ class KitchenInterface extends Component {
     };
     this.updateWaitTime = this.updateWaitTime.bind(this);
     this.waitTimeCallback = this.waitTimeCallback.bind(this);
-    this.checkForPopUp = this.checkForPopUp.bind(this);
+    this.checkPup = this.checkPup.bind(this);
   }
 
   render() {
@@ -37,16 +37,17 @@ class KitchenInterface extends Component {
       handle,
       nonce,
       children,
+      openPup,
       stop,
       restart,
     } = this.props;
-    const openPup = this.checkForPopUp();
+    const pupIsOpen = this.checkPup();
 
     return (
       <div className={type} id="ep-interface">
         <div id="ep-interface-inner">
-        { openPup ?
-          <PopUp {...openPup} />
+        { pupIsOpen ?
+          <PopUp {...pupIsOpen} />
         :
           <>
             <Nav
@@ -55,10 +56,11 @@ class KitchenInterface extends Component {
               activeFeed={activeFeed}
               switchActiveFeed={switchActiveFeed}
               updateWaitTime={this.updateWaitTime}
+              openPup={openPup}
               stop={stop}
               restart={restart} />
             {children}
-            <Status />
+            <Status openPup={openPup}/>
           </>
         }
         </div>
@@ -108,7 +110,7 @@ class KitchenInterface extends Component {
     this.setState({wait: newWait});
   }
 
-  checkForPopUp() {
+  checkPup() {
     const {popUps} = this.props;
     const {menu, driver, errors} = this.state;
     const keys = Object.keys(popUps);
