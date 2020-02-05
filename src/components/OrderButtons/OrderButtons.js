@@ -27,7 +27,7 @@ const OrderButtons = ({type, orderId, feed, onTick, onDriver}) => {
           }
         </div>
         <div className="buttons-container bottom">
-          <Button className="order-button order-driver bg-grey" onClick={(e) => {e.preventDefault(); onDriver("driver");}} >
+          <Button className="order-button order-driver bg-grey" onClick={(e) => {e.stopPropagation(); onDriver("driver");}} >
             <FontAwesomeIcon icon={faMotorcycle} />
           </Button>
         </div>
