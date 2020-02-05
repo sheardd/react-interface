@@ -19,10 +19,16 @@ class popUp extends Component {
   }
   render() {
   	const {popUp, togglePup} = this.props;
+    const {data} = this.state;
   	return(
       <div id={popUp.id} className="pop-up bg-grey">
         <div id={popUp.id + "-inner"} className="pop-up-inner">
-          <PopUpForm id={popUp.id} description={popUp.description} list={popUp.list} togglePup={togglePup}/>
+          <PopUpForm
+            id={popUp.id}
+            description={popUp.description}
+            list={popUp.list}
+            togglePup={togglePup}
+            data={data} />
         </div>
       </div>
     );
@@ -31,9 +37,7 @@ class popUp extends Component {
   stateToSet(context) {
     if (context === "menu") {
       return {
-        "candidates": {
-          index: [],
-        }
+        "candidates": {},
       };
     } else if (context === "driver") {
       return {"driver": ""};

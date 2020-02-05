@@ -10,12 +10,12 @@ import './PopUpCollectionMenuItem.css';
   * check value)
   */
 
-const PopUpCollectionMenuItem = ({product, checked, hidden}) =>
+const PopUpCollectionMenuItem = ({product, checked}) =>
   <>
     <input type="checkbox" id={product.id}
       value={product.id} data-tags={product.tags}
       data-collection={product.collection} data-title={product.title}
-      checked={hidden ? false : true}/>
+      checked={checked ? false : true}/>
     <label htmlFor={product.id}><p>{product.title}</p></label>
   </>
 

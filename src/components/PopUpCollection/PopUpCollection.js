@@ -5,12 +5,14 @@ import classNames from 'classnames';
 import PopUpCollectionMenuItem from '../PopUpCollectionMenuItem';
 import './PopUpCollection.css';
 
-const PopUpCollection = ({context, collection, hidden}) =>
+const PopUpCollection = ({context, collection, hidden, data}) =>
   <ul className="pop-up-ul pop-up-collection-list">
     {collection.index.map(i =>
       <li className="pop-up-collection-li" key={collection[i].id}>
         {context === "menu" ?
-          <PopUpCollectionMenuItem product={collection[i]} hidden={hidden[i]}/>
+          <PopUpCollectionMenuItem
+            product={collection[i]}
+            checked={hidden[i] || data.candidates[i]} />
         :
           <p>{collection[i].title}: {collection[i].error.code} - {collection[i].error.message}</p>
         }

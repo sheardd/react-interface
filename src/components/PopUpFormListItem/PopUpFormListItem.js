@@ -5,13 +5,13 @@ import classNames from 'classnames';
 import PopUpCollection from '../PopUpCollection';
 import './PopUpFormListItem.css';
 
-const PopUpFormListItem = ({context, item, i, hidden}) => {
+const PopUpFormListItem = ({context, item, i, ...rest}) => {
   const title = context !== "error" ? i.toUpperCase() : (item.index ? "Menu Update Error" : item.code);
   return(
     <li className="pop-up-li" key={i}>
       <label><h3 className="pop-up-li-title">{title}</h3></label>
       {context === "menu" ?
-        <PopUpCollection collection={item} context={context} hidden={hidden}/>
+        <PopUpCollection collection={item} context={context} {...rest}/>
       :
         null
       }
