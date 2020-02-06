@@ -167,7 +167,9 @@ class App extends Component {
   }
 
   stop() {
-    ReactDOM.unmountComponentAtNode(document.getElementById('root'));
+    const root = document.getElementById('root');
+    root.classList.remove("open");
+    ReactDOM.unmountComponentAtNode(root);
   }
 
   restart() {
