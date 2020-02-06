@@ -16,7 +16,7 @@ echo
 echo "Starting upload to $REMOTE_DIR at $HOST from $LOCAL_DIR"
 date
 
-lftp -e "mirror -Rc $LOCAL_DIR $REMOTE_DIR;exit" -u "$USER","$PASSWORD" $HOST <<EOF
+lftp -e "mirror -Rc --delete $LOCAL_DIR $REMOTE_DIR;exit" -u "$USER","$PASSWORD" $HOST <<EOF
 exit
 EOF
 echo
