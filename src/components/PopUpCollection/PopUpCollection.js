@@ -5,16 +5,18 @@ import classNames from 'classnames';
 import PopUpCollectionMenuItem from '../PopUpCollectionMenuItem';
 import './PopUpCollection.css';
 
-const PopUpCollection = ({context, collection, hidden, data}) =>
+const PopUpCollection = ({collection, products, context, hidden, data, formSelection}) =>
   <ul className="pop-up-ul pop-up-collection-list">
-    {collection.index.map(i =>
-      <li className="pop-up-collection-li" key={collection[i].id}>
+    {products.index.map(i =>
+      <li className="pop-up-collection-li" key={products[i].id}>
         {context === "menu" ?
           <PopUpCollectionMenuItem
-            product={collection[i]}
-            checked={hidden[i] || data.candidates[i]} />
+            collection={collection}
+            product={products[i]}
+            checked={hidden[i] || data.candidates[collection].indexOf(i) !== -1}
+            formSelection={formSelection} />
         :
-          <p>{collection[i].title}: {collection[i].error.code} - {collection[i].error.message}</p>
+          <p>{products[i].title}: {products[i].error.code} - {products[i].error.message}</p>
         }
       </li>
     )}

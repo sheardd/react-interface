@@ -13,14 +13,16 @@ class popUp extends Component {
     const stateToSet = this.stateToSet(popUp.id);
     if (stateToSet) {
       this.state = {
-      	data: stateToSet,
+        data: stateToSet,
       };
     }
+
+    this.formSelection = this.formSelection.bind(this);
   }
   render() {
-  	const {popUp, togglePup} = this.props;
+    const {popUp, togglePup} = this.props;
     const {data} = this.state;
-  	return(
+    return(
       <div id={popUp.id} className="pop-up bg-grey">
         <div id={popUp.id + "-inner"} className="pop-up-inner">
           <PopUpForm
@@ -28,21 +30,64 @@ class popUp extends Component {
             description={popUp.description}
             list={popUp.list}
             togglePup={togglePup}
-            data={data} />
+            data={data}
+            formSelection={this.formSelection} />
         </div>
       </div>
     );
   }
 
   stateToSet(context) {
+    const {list} = this.props.popUp
     if (context === "menu") {
       return {
-        "candidates": {},
+        "candidates": Object.keys(list).reduce((obj,key) => {
+          if (key !== "hidden") {
+            obj[key] = [];
+          }
+          return obj;
+        }, {}),
       };
     } else if (context === "driver") {
       return {"driver": ""};
     } else {
       return false;
+    }
+  }
+
+  formSelection(id, context) {
+    this.setState(this.updateFormSelection(id,context));
+  }
+
+  updateFormSelection(update, context) {
+    const {list} = this.props.popUp;
+    return (prevState) => {
+      const {data} = prevState;
+      if (context === "menu") {
+        return {
+          data: {
+            candidates: 
+              Object.keys(data.candidates).reduce((obj, key) => {
+                if (key === update.collection) {
+                  if (data.candidates[key].indexOf(update.id) !== -1) {
+                    obj[key] = data.candidates[key].filter(i => i !== update.id);
+                  } else {
+                    obj[key] = [...data.candidates[key], update.id];
+                  }
+                } else {
+                  obj[key] = data.candidates[key];
+                }
+                return obj;
+              }, {})
+          }
+        }
+      } else {
+        return {
+          data: {
+            driver: update
+          }
+        }
+      }
     }
   }
 }

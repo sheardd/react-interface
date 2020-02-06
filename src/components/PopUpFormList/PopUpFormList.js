@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import PopUpFormListItem from '../PopUpFormListItem';
 import './PopUpFormList.css';
 
-const PopUpFormList = ({id, list, data}) =>
+const PopUpFormList = ({id, list, ...rest}) =>
   <ul id={id + "-list"} className="pop-up-ul">
     {list.index.filter(i => i !== "hidden").map(
       i => {
@@ -17,12 +17,12 @@ const PopUpFormList = ({id, list, data}) =>
             item={item}
             i={i}
             hidden={list["hidden"]}
-            data={data} />
+            {...rest} />
         );
       }
     )}
     {id === "driver" ?
-      <PopUpFormListItem key="unassign" context="unassign" item="unassign" i="unassign" hidden={false}/>
+      <PopUpFormListItem key="unassign" context="driver" item="unassign" i="unassign" hidden={false} {...rest} />
     :
       null
     }

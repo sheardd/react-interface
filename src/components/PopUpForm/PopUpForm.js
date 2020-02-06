@@ -6,11 +6,11 @@ import PopUpFormList from '../PopUpFormList';
 import Button from '../Button';
 import './PopUpForm.css';
 
-const PopUpForm = ({id, description, list, togglePup, data}) =>
+const PopUpForm = ({id, description, list, togglePup, ...rest}) =>
 <form id={id + "-form"} className="pop-up-form">
   <p>{description}</p>
   {list ?
-    <PopUpFormList id={id} list={list} data={data} />
+    <PopUpFormList id={id} list={list} {...rest} />
   :
     <p className="pls-wait-msg">Fetching data, please wait...</p>
   }

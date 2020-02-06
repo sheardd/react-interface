@@ -10,12 +10,12 @@ import './PopUpCollectionMenuItem.css';
   * check value)
   */
 
-const PopUpCollectionMenuItem = ({product, checked}) =>
+const PopUpCollectionMenuItem = ({collection, product, checked, formSelection, }) =>
   <>
     <input type="checkbox" id={product.id}
       value={product.id} data-tags={product.tags}
       data-collection={product.collection} data-title={product.title}
-      checked={checked ? false : true}/>
+      checked={checked ? false : true} onChange={() => formSelection({collection: collection, id: product.id}, "menu")}/>
     <label htmlFor={product.id}><p>{product.title}</p></label>
   </>
 
