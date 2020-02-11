@@ -17,8 +17,15 @@ class KitchenInterface extends Component {
       menu: sampleMenu,
       driver: sampleDriver,
       errors: sampleErrors,
-      wait: props.wait,
+      wait: {
+        wt_updated: null,
+        wait_time: 0,
+      },
     };
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.initWaitTimer = this.initWaitTimer.bind(this);
+    this.startWaitTimer = this.startWaitTimer.bind(this);
+    this.waitTimerExpired = this.waitTimerExpired.bind(this);
     this.updateWaitTime = this.updateWaitTime.bind(this);
     this.waitTimeCallback = this.waitTimeCallback.bind(this);
     this.checkPup = this.checkPup.bind(this);
@@ -68,6 +75,74 @@ class KitchenInterface extends Component {
     );
   }
 
+  componentDidMount() {
+    this.initWaitTimer();
+  }
+
+  initWaitTimer() {
+    const {wt_updated} = this.state.wait;
+    const {ajaxurl, handle, nonce} = this.props;
+    if (wt_updated) {
+      let now = Date.now(),
+        sinceUpdate = now - wt_updated;
+      if (sinceUpdate < 1200000) {
+        this.startWaitTimer(1200000 - sinceUpdate);
+        return;
+      }
+      this.waitTimerExpired(this);
+    } else {
+      axios.get(
+        ajaxurl,
+        {
+          params: {
+            action: "ki_fetch_wait_time",
+            staff_nonce: nonce,
+            store: handle,
+          }
+        }
+      ).then(
+        response => {
+          this.setState(
+            {
+              wait: {
+                wt_updated: parseInt(response.data.wait.wt_updated),
+                wait_time: parseInt(response.data.wait.wait_time),
+              }
+            }
+          )
+        }
+      );
+    }
+  }
+
+  /**
+   * Starts the wait timer:
+   *  - By default, starts with fifteen minutes on the timer,
+   *    unless another value is given.
+   *  - Clears any existing timer and removes bg-red from the wait time
+   *    buttons to reset before running.
+   *  - Sets a new timer with the given time value, and assigns it to
+   *    the interface under the waitTimer property for later reference.
+   *  - When the timer expires, run waitTimerExpired.
+   */
+  startWaitTimer(time = 1200000){
+    var that = this;
+    if (this.waitTimer) {
+      clearTimeout(this.waitTimer);
+    }
+    this.dom.find("#int-nav-wait").removeClass("bg-red");
+    this.waitTimer = setTimeout(function(){that.waitTimerExpired(that);}, time);
+  }
+
+  /**
+   * Timeout callback to demonstrate that it has been more than fifteen minutes
+   * since wait time was last updated by turning the wait time buttons red, in
+   * order to prompt a more recent update.
+   */
+  waitTimerExpired(that) {
+    that.dom.find("#int-nav-wait").addClass("bg-red");
+  }
+
   updateWaitTime(time) {
     // $.post(
     //   ajaxurl,
@@ -79,7 +154,17 @@ class KitchenInterface extends Component {
     //   },
     //   this.waitTimeCallback()
     // );
-    this.waitTimeCallback(time);
+    const {ajaxurl, handle, nonce} = this.props;
+    axios.post(
+      ajaxurl,
+      {
+        "action": "ki_update_wait_time",
+        "store": handle,
+        "staff_nonce": nonce,
+        "time": time
+      }
+    ).then(this.waitTimeCallback());
+    
   }
 
   /**
@@ -90,7 +175,7 @@ class KitchenInterface extends Component {
    *  in the interface, restart the timer, and remove bg-red
    *  from the wait timer buttons (if it's there).
    */
-  waitTimeCallback(time) {
+  waitTimeCallback() {
   //   const that = this;
   //   return function(data, textStatus, jqXHR){
   //     if (data) {
@@ -102,12 +187,14 @@ class KitchenInterface extends Component {
   //       that.dom.find("#int-nav-wait").removeClass("bg-red");
   //     }
   //   }
-    const {wait} = this.state;
-    const newWait = {
-      wt_updated: 0,
-      wait_time: time
+  return function (data) {
+      const {wait} = this.state;
+      const newWait = {
+        wt_updated: 0,
+        wait_time: data
+      }
+      this.setState({wait: newWait});
     }
-    this.setState({wait: newWait});
   }
 
   checkPup() {
