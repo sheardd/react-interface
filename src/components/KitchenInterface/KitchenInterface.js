@@ -28,7 +28,6 @@ class KitchenInterface extends Component {
     this.startWaitTimer = this.startWaitTimer.bind(this);
     this.waitTimerExpired = this.waitTimerExpired.bind(this);
     this.updateWaitTime = this.updateWaitTime.bind(this);
-    this.waitTimeCallback = this.waitTimeCallback.bind(this);
     this.checkPup = this.checkPup.bind(this);
   }
 
@@ -135,8 +134,6 @@ class KitchenInterface extends Component {
     if (waitTimer) {
       clearTimeout(waitTimer);
     }
-    // this.dom.find("#int-nav-wait").removeClass("bg-red");
-    this.waitTimer = setTimeout(function(){that.waitTimerExpired(that);}, time);
     this.setState({
       waitTimer: setTimeout(() => that.waitTimerExpired(that), time)
     });
@@ -148,64 +145,32 @@ class KitchenInterface extends Component {
    * order to prompt a more recent update.
    */
   waitTimerExpired(that) {
-    // that.dom.find("#int-nav-wait").addClass("bg-red");
     this.setState({
       waitTimer: null
     });
   }
 
   updateWaitTime(time) {
-    // $.post(
-    //   ajaxurl,
-    //   {
-    //     "action": "ki_update_wait_time",
-    //     "store": this.wait,
-    //     "staff_nonce": this.ep.staff_nonce,
-    //     "time": time
-    //   },
-    //   this.waitTimeCallback()
-    // );
     const {ajaxurl, handle, nonce} = this.props;
+    let data = new FormData;
+    data.append('action', 'ki_update_wait_time');
+    data.append('store', handle);
+    data.append('staff_nonce', nonce);
+    data.append('time', time);
     axios.post(
       ajaxurl,
-      {
-        "action": "ki_update_wait_time",
-        "store": handle,
-        "staff_nonce": nonce,
-        "time": time
-      }
-    ).then(this.waitTimeCallback());
-    
-  }
-
-  /**
-   *  Evaluates the response to updateWaitTime
-   *  Assuming we have data, update the current store's
-   *  wait time and wt_updated properties with the newly
-   *  returned values, update the wait time value displayed
-   *  in the interface, restart the timer, and remove bg-red
-   *  from the wait timer buttons (if it's there).
-   */
-  waitTimeCallback() {
-  //   const that = this;
-  //   return function(data, textStatus, jqXHR){
-  //     if (data) {
-  //       ep.stores[that.store].wait_time = data.time;
-  //       ep.stores[that.store].wt_updated = data.at;
-  //       that.dom.find(".wait-time .current-wait-time").text("+" + data.time);
-  //       that.waitTimeUpdated = data.at;
-  //       that.startWaitTimer();
-  //       that.dom.find("#int-nav-wait").removeClass("bg-red");
-  //     }
-  //   }
-  return function (data) {
+      data
+    ).then(response => {
       const {wait} = this.state;
-      const newWait = {
-        wt_updated: 0,
-        wait_time: data
-      }
-      this.setState({wait: newWait});
-    }
+      this.setState({
+        wait: {
+          wt_updated: response.data.wait.wt_updated,
+          wait_time: response.data.wait.wait_time
+        }
+      },
+      this.startWaitTimer
+      );
+    });
   }
 
   checkPup() {
