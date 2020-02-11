@@ -10,6 +10,7 @@ import './Nav.css';
 const Nav = (props) => {
   const {
     type,
+    waitTimer,
     wait_time,
     activeFeed,
     switchActiveFeed,
@@ -26,6 +27,12 @@ const Nav = (props) => {
     "bg-grey",
     {"bg-dark-grey": activeFeed === "other"}
   );
+  const waitClasses = classNames(
+    "bg-grey",
+    "wait-array",
+    {"bg-red": !waitTimer}
+  );
+
   return (
     <div id='int-nav'>
       {
@@ -40,7 +47,7 @@ const Nav = (props) => {
           <Button className={openClasses} id='int-nav-filter-open' onClick={() => switchActiveFeed("open")} >OPEN</Button>
           <Button className={otherClasses} id='int-nav-filter-other' onClick={() => switchActiveFeed("other")} >DONE</Button>
           <Button id='int-nav-menu' className='bg-grey' onClick={() => togglePup("menu")}>MENU</Button>
-          <span id='int-nav-wait' className='bg-grey wait-array'>
+          <span id='int-nav-wait' className={waitClasses}>
             <Button className='wait' value='0' onClick={() => updateWaitTime(0)}>+0</Button>
             <Button className='wait' value='20' onClick={() => updateWaitTime(20)}>+20</Button>
             <Button className='wait' value='30' onClick={() => updateWaitTime(30)}>+30</Button>

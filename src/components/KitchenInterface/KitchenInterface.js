@@ -21,6 +21,7 @@ class KitchenInterface extends Component {
         wt_updated: null,
         wait_time: 0,
       },
+      waitTimer: null
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.initWaitTimer = this.initWaitTimer.bind(this);
@@ -35,6 +36,7 @@ class KitchenInterface extends Component {
     const {
       menu,
       wait,
+      waitTimer,
     } = this.state;
     const {
       popUps,
@@ -59,6 +61,7 @@ class KitchenInterface extends Component {
           <>
             <Nav
               type={type}
+              waitTimer={waitTimer}
               wait_time={wait.wait_time}
               activeFeed={activeFeed}
               switchActiveFeed={switchActiveFeed}
@@ -108,7 +111,8 @@ class KitchenInterface extends Component {
                 wt_updated: parseInt(response.data.wait.wt_updated),
                 wait_time: parseInt(response.data.wait.wait_time),
               }
-            }
+            },
+            this.initWaitTimer
           )
         }
       );
@@ -126,12 +130,16 @@ class KitchenInterface extends Component {
    *  - When the timer expires, run waitTimerExpired.
    */
   startWaitTimer(time = 1200000){
-    var that = this;
-    if (this.waitTimer) {
-      clearTimeout(this.waitTimer);
+    const {waitTimer} = this.state;
+    const that = this;
+    if (waitTimer) {
+      clearTimeout(waitTimer);
     }
-    this.dom.find("#int-nav-wait").removeClass("bg-red");
+    // this.dom.find("#int-nav-wait").removeClass("bg-red");
     this.waitTimer = setTimeout(function(){that.waitTimerExpired(that);}, time);
+    this.setState({
+      waitTimer: setTimeout(() => that.waitTimerExpired(that), time)
+    });
   }
 
   /**
@@ -140,7 +148,10 @@ class KitchenInterface extends Component {
    * order to prompt a more recent update.
    */
   waitTimerExpired(that) {
-    that.dom.find("#int-nav-wait").addClass("bg-red");
+    // that.dom.find("#int-nav-wait").addClass("bg-red");
+    this.setState({
+      waitTimer: null
+    });
   }
 
   updateWaitTime(time) {
