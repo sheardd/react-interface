@@ -28,7 +28,9 @@ class App extends Component {
           index: []
         }
       },
-      poll: null,
+      shouldPoll: null,
+      activePoll: null,
+      pollTimeout: null,
       popUps: {
         menu: {
           open: false,
@@ -55,7 +57,9 @@ class App extends Component {
     };
 
     this.fetchOrders = this.fetchOrders.bind(this);
+    this.fetchOrdersApi = this.fetchOrdersApi.bind(this);
     this.parseOrders = this.parseOrders.bind(this);
+    this.saveOrders = this.saveOrders.bind(this);
     this.setOrderTimes = this.setOrderTimes.bind(this);
     this.switchActiveFeed = this.switchActiveFeed.bind(this);
     this.toggleOrder = this.toggleOrder.bind(this);
@@ -100,11 +104,35 @@ class App extends Component {
     this.setState({activeFeed: feed});
   }
 
-  fetchOrders(type) {
+  fetchOrders(init = false) {
+    const {type} = this.props;
+    const {shouldPoll, activePoll, pollTimeout} = this.state;
+    if (type === "di" || (type === "ki" && (init || shouldPoll))) {
+      this.fetchOrdersApi(type)
+        .then(response => this.parseOrders(response, type))
+        .then(
+          orders => {
+            if (this._isMounted && orders) {
+              this.setState(this.saveOrders(orders, type));
+            }
+          },
+          error => {
+            console.log("An error occurred when parsing orders");
+            if (this._isMounted) {
+              this.setState({
+                shouldPoll: false
+              });
+            }
+          }
+        );
+    }
+  }
+
+  fetchOrdersApi(type) {
     const that = this;
-    return function() {
+    return new Promise(async (resolve, reject) => {
       const {ajaxurl, handle, nonce,} = that.props;
-      axios.get(
+      const response = await axios.get(
         ajaxurl,
         {
           params: {
@@ -113,55 +141,81 @@ class App extends Component {
             "staff_nonce": nonce,
             "type": type
           }
-        })
-      .then(that.parseOrders(that));
+        });
+      if (response.status === 200) {
+        resolve(response);
+      } else {
+        reject(response);
+      }
+    });
+  }
+
+  parseOrders(response) {
+    const newOrders = JSON.parse(response.data.body).orders;
+    let openIn = [];
+    let otherIn = [];
+    if (newOrders.length) {
+      const sortedOrders = newOrders.reduce((obj, order) => {
+        order.json = JSON.parse(order.note_attributes[0].value);
+        order.open = false;
+        if (order.json.address) {
+          order = this.setOrderTimes(order);
+          if (order.json.delivered && order.json.delivered === "true") {
+            obj.other[order.id] = order;
+            otherIn = [...otherIn, order.id];
+          } else {
+            obj.open[order.id] = order;
+            openIn = [...openIn, order.id];
+          }
+        }
+        return obj;
+      }, {open: {}, other: {}});
+      return {
+        open: {
+          ...sortedOrders.open,
+          index: openIn,
+        },
+        other: {
+          ...sortedOrders.other,
+          index: otherIn,
+        }
+      }
+    } else {
+      return null;
     }
   }
 
-  parseOrders(that) {
-    return function(response){
-      if (response.status === 200) {
-        that.setState(prevState => {
-          const newOrders = JSON.parse(response.data.body).orders;
-          const {open, other} = prevState.orders;
-          let openIn = [];
-          let otherIn = [];
-          if (newOrders.length) {
-            const sortedOrders = newOrders.reduce((obj, order) => {
-              order.json = JSON.parse(order.note_attributes[0].value);
-              order.open = false;
-              if (order.json.address) {
-                order = that.setOrderTimes(order);
-                if (order.json.delivered && order.json.delivered === "true") {
-                  obj.other[order.id] = order;
-                  otherIn = [...otherIn, order.id];
-                } else {
-                  obj.open[order.id] = order;
-                  openIn = [...openIn, order.id];
-                }
-              }
-              return obj;
-            }, {open: {}, other: {}});
-            return {
-              orders: {
-                open: {
-                  ...open,
-                  ...sortedOrders.open,
-                  index: [...open.index, ...openIn],
-                },
-                other: {
-                  ...other,
-                  ...sortedOrders.other,
-                  index: [...other.index, ...otherIn],
-                }
-              }
-            }
-          } else {
-            return null;
-          }
-        });
+  saveOrders(orders, type) {
+    return function(prevState) {
+      const {pollTimeout} = prevState;
+      const {open, other} = prevState.orders;
+      const newState = {
+        orders: {}
+      };
+      if (pollTimeout) {
+        clearTimeout(pollTimeout);
       }
-    };
+      if (orders) {
+        newState.orders.open = {
+          ...open,
+          ...orders.open,
+          index: [...open.index, ...orders.open.index],
+        };
+        newState.orders.other = {
+          ...other,
+          ...orders.other,
+          index: [...other.index, ...orders.other.index],
+        };
+      } else {
+        newState.orders.open = open;
+        newState.orders.other = other;
+      }
+      if (type === "ki") {
+        newState.shouldPoll = true;
+        newState.pollTimeout = setTimeout(this.fetchOrders, 5000, type);
+      }
+      return newState;
+    }
   }
 
   setOrderTimes(order) {
@@ -283,6 +337,18 @@ class App extends Component {
     // otherwise when we restart we're potentially using old data from outside the app
     // before it was initialised.
     this.setState({orders: sampleOrders, activeFeed: "open"});
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount(){
+    const {pollTimeout} = this.state;
+    if (pollTimeout) {
+      clearTimeout(pollTimeout);
+    }
+    this._isMounted = false;
   }
 }
 

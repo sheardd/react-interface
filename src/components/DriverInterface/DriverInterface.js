@@ -35,7 +35,7 @@ class DriverInterface extends Component {
 
   componentDidMount() {
     const {fetchOrders} = this.props;
-    (fetchOrders())("di");
+    fetchOrders();
   }
 }
 
