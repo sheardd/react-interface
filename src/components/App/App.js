@@ -20,7 +20,15 @@ class App extends Component {
         wt_updated: props.wt_updated,
       },
       activeFeed: "open",
-      orders: sampleOrders,
+      orders: {
+        open: {
+          index: []
+        },
+        other: {
+          index: []
+        }
+      },
+      poll: null,
       popUps: {
         menu: {
           open: false,
@@ -46,6 +54,9 @@ class App extends Component {
       }
     };
 
+    this.fetchOrders = this.fetchOrders.bind(this);
+    this.parseOrders = this.parseOrders.bind(this);
+    this.setOrderTimes = this.setOrderTimes.bind(this);
     this.switchActiveFeed = this.switchActiveFeed.bind(this);
     this.toggleOrder = this.toggleOrder.bind(this);
     this.updateOrder = this.updateOrder.bind(this);
@@ -65,6 +76,7 @@ class App extends Component {
       nonce={nonce}
       wait={wait}
       orders={orders}
+      fetchOrders={this.fetchOrders}
       popUps={popUps}
       ajaxurl={ajaxurl}
       activeFeed={activeFeed}
@@ -86,6 +98,99 @@ class App extends Component {
 
   switchActiveFeed(feed) {
     this.setState({activeFeed: feed});
+  }
+
+  fetchOrders(type) {
+    const that = this;
+    return function() {
+      const {ajaxurl, handle, nonce,} = that.props;
+      axios.get(
+        ajaxurl,
+        {
+          params: {
+            "action": "int_orders",
+            "store": handle,
+            "staff_nonce": nonce,
+            "type": type
+          }
+        })
+      .then(that.parseOrders(that));
+    }
+  }
+
+  parseOrders(that) {
+    return function(response){
+      if (response.status === 200) {
+        that.setState(prevState => {
+          const newOrders = JSON.parse(response.data.body).orders;
+          const {open, other} = prevState.orders;
+          let openIn = [];
+          let otherIn = [];
+          if (newOrders.length) {
+            const sortedOrders = newOrders.reduce((obj, order) => {
+              order.json = JSON.parse(order.note_attributes[0].value);
+              order.open = false;
+              if (order.json.address) {
+                order = that.setOrderTimes(order);
+                if (order.json.delivered && order.json.delivered === "true") {
+                  obj.other[order.id] = order;
+                  otherIn = [...otherIn, order.id];
+                } else {
+                  obj.open[order.id] = order;
+                  openIn = [...openIn, order.id];
+                }
+              }
+              return obj;
+            }, {open: {}, other: {}});
+            return {
+              orders: {
+                open: {
+                  ...open,
+                  ...sortedOrders.open,
+                  index: [...open.index, ...openIn],
+                },
+                other: {
+                  ...other,
+                  ...sortedOrders.other,
+                  index: [...other.index, ...otherIn],
+                }
+              }
+            }
+          } else {
+            return null;
+          }
+        });
+      }
+    };
+  }
+
+  setOrderTimes(order) {
+    var placedRaw = new Date(order.created_at), placed, placedUTC, midnight = new Date(),
+      midnightUTC, eta, position, deliveryMs = 1500000, asapRaw,
+      days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    placedUTC = placedRaw.getTime();
+    placed = placedRaw.toLocaleString().split(" ")[1].substring(0,5);
+    midnight.setHours(0,0,0,0);
+    midnightUTC = midnight.getTime();
+    if (order.json.scheduled && order.json.scheduled !== "false") {
+      midnight.setSeconds(parseInt(order.json.eta));
+      eta = midnight.toLocaleString().split(" ")[1].substring(0,5);
+      if (order.json.address) {
+        midnight.setMilliseconds(midnight.getMilliseconds() - deliveryMs);
+        order.kitchenTime = midnight.toLocaleString().split(" ")[1].substring(0,5);
+      }
+      position = midnight.getTime() / 1000;
+    } else {
+      asapRaw = new Date(parseInt(order.json.eta) + midnight.getTime()
+        - (this.type === "ki" && order.json.address ? deliveryMs : 0));
+      eta = asapRaw.toLocaleString().split(" ")[1].substring(0,5);
+      position = parseInt(asapRaw.getTime() / 1000);
+    }
+    order.created_at_pretty = placed;
+    order.eta = eta;
+    order.position = position;
+    order.placedUTC = placedUTC;
+    return order;
   }
 
   toggleOrder(orderId, feed) {

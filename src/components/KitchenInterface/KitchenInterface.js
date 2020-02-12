@@ -78,7 +78,9 @@ class KitchenInterface extends Component {
   }
 
   componentDidMount() {
+    const {fetchOrders} = this.props;
     this.initWaitTimer();
+    (fetchOrders())("ki");
   }
 
   initWaitTimer() {
