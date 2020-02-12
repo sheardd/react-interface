@@ -420,16 +420,14 @@
 #ep-interface .order-sidebar h3 {
   text-align: center;
 }
-#ep-interface .order-container.scheduled .order-sidebar h3.target,
-#ep-interface.di .order-container.scheduled .order-sidebar h3 {
+#ep-interface .order-container.scheduled .order-sidebar h3.target {
   border: solid 3px red;
   color: red;
   padding: 4px;
   box-sizing: border-box;
   background: #fefefe;
 }
-#ep-interface .order-container.delivery.scheduled .order-sidebar h3,
-#ep-interface.di .order-container.scheduled .order-sidebar h3 {
+#ep-interface .order-container.delivery.scheduled .order-sidebar h3 {
   margin: 0.3rem 0;
 }
 #ep-interface .order-container.delivery.scheduled .order-sidebar h3.target {
