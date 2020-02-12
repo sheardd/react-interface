@@ -104,6 +104,12 @@ class App extends Component {
     this.setState({activeFeed: feed});
   }
 
+  /**
+    *
+    * Add a check for cancelled orders between parseOrders and saveOrders
+    * calls.
+    *
+    */
   fetchOrders(init = false) {
     const {type} = this.props;
     const {shouldPoll, activePoll, pollTimeout} = this.state;
@@ -150,25 +156,34 @@ class App extends Component {
     });
   }
 
-  parseOrders(response) {
+  parseOrders(response, type) {
+    const {orders} = this.state;
     const newOrders = JSON.parse(response.data.body).orders;
     let openIn = [];
     let otherIn = [];
     if (newOrders.length) {
       const sortedOrders = newOrders.reduce((obj, order) => {
-        order.json = JSON.parse(order.note_attributes[0].value);
-        order.open = false;
-        if (order.json.address) {
-          order = this.setOrderTimes(order);
-          if (order.json.delivered && order.json.delivered === "true") {
-            obj.other[order.id] = order;
-            otherIn = [...otherIn, order.id];
-          } else {
-            obj.open[order.id] = order;
-            openIn = [...openIn, order.id];
+        if (orders.open[order.id] || orders.other[order.id]) {
+          return obj;
+        } else {
+          order.json = JSON.parse(order.note_attributes[0].value);
+          order.open = false;
+          if (type === "ki" || (type === "di" && order.json.address)) {
+            const feed = this.orderFeedEval(order, type);
+            order = this.setOrderTimes(order);
+            if (type === "ki") {
+              order = this.setOrderPackaging(order);
+            }
+            if (feed === "other") {
+              obj.other[order.id] = order;
+              otherIn = [...otherIn, order.id];
+            } else if (feed === "open") {
+              obj.open[order.id] = order;
+              openIn = [...openIn, order.id];
+            }
           }
+          return obj;
         }
-        return obj;
       }, {open: {}, other: {}});
       return {
         open: {
@@ -218,8 +233,26 @@ class App extends Component {
     }
   }
 
+  orderFeedEval(order, type) {
+    if (type === "ki" && (!order.json.delivered || order.json.delivered === "false")) {
+      if (order.fulfillment_status === "fulfilled") {
+        return "other";
+      } else {
+        return "open";
+      }
+    } else if (type === "di") {
+      if (order.json.delivered && order.json.delivered === "true") {
+        return "other";
+      } else {
+        return "open";
+      }
+    } else {
+      return null;
+    }
+  }
+
   setOrderTimes(order) {
-    var placedRaw = new Date(order.created_at), placed, placedUTC, midnight = new Date(),
+    let placedRaw = new Date(order.created_at), placed, placedUTC, midnight = new Date(),
       midnightUTC, eta, position, deliveryMs = 1500000, asapRaw,
       days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
     placedUTC = placedRaw.getTime();
@@ -244,6 +277,18 @@ class App extends Component {
     order.eta = eta;
     order.position = position;
     order.placedUTC = placedUTC;
+    return order;
+  }
+
+  setOrderPackaging(order) {
+    let pkg = false;
+    for (let i = 0; i < order.line_items.length; i++) {
+      if (order.line_items[i].sku === "packaging") {
+        pkg = true;
+        break;
+      }
+    }
+    order.hasPackaging = pkg;
     return order;
   }
 
