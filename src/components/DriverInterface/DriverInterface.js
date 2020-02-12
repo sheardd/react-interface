@@ -8,23 +8,14 @@ import './DriverInterface.css';
 class DriverInterface extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      orders: props.orders,
-      store: props.store,
-    };
   }
 
   render() {
-    const {
-      store,
-      orders,
-    } = this.state;
     const {
       activeFeed,
       switchActiveFeed,
       type,
       handle,
-      nonce,
       children,
       stop,
     } = this.props;
@@ -40,6 +31,11 @@ class DriverInterface extends Component {
         </div>
       </div>
     );
+  }
+
+  componentDidMount() {
+    const {fetchOrders} = this.props;
+    (fetchOrders())("di");
   }
 }
 
