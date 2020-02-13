@@ -120,7 +120,7 @@ class App extends Component {
         .then(response => this.parseOrders(response, type))
         .then(
           orders => {
-            if (this._isMounted && orders) {
+            if (this._isMounted) {
               this.setState(this.updateOrders(orders, type));
             }
           },
