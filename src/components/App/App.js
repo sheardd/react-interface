@@ -59,7 +59,9 @@ class App extends Component {
     this.fetchOrders = this.fetchOrders.bind(this);
     this.fetchOrdersApi = this.fetchOrdersApi.bind(this);
     this.parseOrders = this.parseOrders.bind(this);
-    this.saveOrders = this.saveOrders.bind(this);
+    this.updateOrders = this.updateOrders.bind(this);
+    this.checkCancelledDelivered = this.checkCancelledDelivered.bind(this);
+    this.filterNewOrders = this.filterNewOrders.bind(this);
     this.setOrderTimes = this.setOrderTimes.bind(this);
     this.switchActiveFeed = this.switchActiveFeed.bind(this);
     this.toggleOrder = this.toggleOrder.bind(this);
@@ -119,7 +121,7 @@ class App extends Component {
         .then(
           orders => {
             if (this._isMounted && orders) {
-              this.setState(this.saveOrders(orders, type));
+              this.setState(this.updateOrders(orders, type));
             }
           },
           error => {
@@ -157,33 +159,28 @@ class App extends Component {
   }
 
   parseOrders(response, type) {
-    const {orders} = this.state;
     const newOrders = JSON.parse(response.data.body).orders;
     let openIn = [];
     let otherIn = [];
     if (newOrders.length) {
       const sortedOrders = newOrders.reduce((obj, order) => {
-        if (orders.open[order.id] || orders.other[order.id]) {
-          return obj;
-        } else {
-          order.json = JSON.parse(order.note_attributes[0].value);
-          order.open = false;
-          if (type === "ki" || (type === "di" && order.json.address)) {
-            const feed = this.orderFeedEval(order, type);
-            order = this.setOrderTimes(order);
-            if (type === "ki") {
-              order = this.setOrderPackaging(order);
-            }
-            if (feed === "other") {
-              obj.other[order.id] = order;
-              otherIn = [...otherIn, order.id];
-            } else if (feed === "open") {
-              obj.open[order.id] = order;
-              openIn = [...openIn, order.id];
-            }
+        order.json = JSON.parse(order.note_attributes[0].value);
+        order.open = false;
+        if (type === "ki" || (type === "di" && order.json.address)) {
+          const feed = this.orderFeedEval(order, type);
+          order = this.setOrderTimes(order);
+          if (type === "ki") {
+            order = this.setOrderPackaging(order);
           }
-          return obj;
+          if (feed === "other") {
+            obj.other[order.id] = order;
+            otherIn = [...otherIn, order.id];
+          } else if (feed === "open") {
+            obj.open[order.id] = order;
+            openIn = [...openIn, order.id];
+          }
         }
+        return obj;
       }, {open: {}, other: {}});
       return {
         open: {
@@ -200,30 +197,31 @@ class App extends Component {
     }
   }
 
-  saveOrders(orders, type) {
+  updateOrders(receivedOrders, type) {
     return function(prevState) {
       const {pollTimeout} = prevState;
-      const {open, other} = prevState.orders;
+      const {orders} = prevState;
       const newState = {
         orders: {}
       };
       if (pollTimeout) {
         clearTimeout(pollTimeout);
       }
-      if (orders) {
+      if (receivedOrders) {
+        const oldOrders = this.checkCancelledDelivered(orders, receivedOrders, type);
+        const newOrders = this.filterNewOrders(oldOrders, receivedOrders);
         newState.orders.open = {
-          ...open,
-          ...orders.open,
-          index: [...open.index, ...orders.open.index],
+          ...oldOrders.open,
+          ...newOrders.open,
+          index: [...oldOrders.open.index, ...newOrders.open.index],
         };
         newState.orders.other = {
-          ...other,
-          ...orders.other,
-          index: [...other.index, ...orders.other.index],
+          ...oldOrders.other,
+          ...newOrders.other,
+          index: [...oldOrders.other.index, ...newOrders.other.index],
         };
       } else {
-        newState.orders.open = open;
-        newState.orders.other = other;
+        newState.orders = orders;
       }
       if (type === "ki") {
         newState.shouldPoll = true;
@@ -231,6 +229,45 @@ class App extends Component {
       }
       return newState;
     }
+  }
+
+  checkCancelledDelivered(current, received, type) {
+    return Object.keys(current).reduce((obj, key) => {
+      obj[key] = Object.keys(current[key]).reduce((o, k) => {
+        if (k !== "index") {
+          let order = current[key][k];
+          let receivedOrder = received.open[order.id] || received.other[order.id];
+          if (receivedOrder) {
+            if (type === "ki" && receivedOrder.json.address
+              && receivedOrder.json.delivered
+              && receivedOrder.json.delivered === "true") {
+              return o;
+            }
+          } else {
+            order.cancelled = true;
+          }
+          o[order.id] = order;
+          o.index = [...o.index, order.id];
+        }
+        return o;
+      }, {index: []});
+      return obj;
+    }, {});
+  }
+
+  filterNewOrders(old, receivedOrders) {
+    return Object.keys(receivedOrders).reduce((obj, key) => {
+      obj[key] = Object.keys(receivedOrders[key]).reduce((o,k) => {
+        if (k === "index" || old[key][k]) {
+          return o;
+        } else {
+          o[k] = receivedOrders[key][k];
+          o.index = [...o.index, k];
+          return o;
+        }
+      }, {index: []})
+      return obj;
+    }, {});
   }
 
   orderFeedEval(order, type) {
