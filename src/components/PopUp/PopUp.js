@@ -17,7 +17,9 @@ class popUp extends Component {
       };
     }
 
+    this.stateToSet = this.stateToSet.bind(this);
     this.formSelection = this.formSelection.bind(this);
+    this.updateFormSelection = this.updateFormSelection.bind(this);
   }
   render() {
     const {popUp, togglePup} = this.props;
