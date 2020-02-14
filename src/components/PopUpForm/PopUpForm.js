@@ -16,7 +16,7 @@ const PopUpForm = ({id, description, list, togglePup, ...rest}) =>
   }
 
 
-  {list.current &&
+  {list && list.current &&
     <input type="hidden" name="driver-assign-shopify" id="driver-assign-shopify" value={list.current} />
   }
   <div className="btn-row">

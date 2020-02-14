@@ -6,7 +6,6 @@ import PopUp from '../PopUp';
 import Nav from '../Nav';
 import Status from '../Status';
 import './KitchenInterface.css';
-import sampleMenu from '../../sample-data/sampleMenu.js';
 import sampleDriver from '../../sample-data/sampleDriver.js';
 import sampleErrors from '../../sample-data/sampleErrors.js';
 
@@ -14,7 +13,8 @@ class KitchenInterface extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      menu: sampleMenu,
+      pupData: null,
+      menu: null,
       driver: sampleDriver,
       errors: sampleErrors,
       wait: {
@@ -24,6 +24,8 @@ class KitchenInterface extends Component {
       waitTimer: null
     };
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.menuFetchRequest = this.menuFetchRequest.bind(this);
+    this.menuFetchResponse = this.menuFetchResponse.bind(this);
     this.initWaitTimer = this.initWaitTimer.bind(this);
     this.startWaitTimer = this.startWaitTimer.bind(this);
     this.waitTimerExpired = this.waitTimerExpired.bind(this);
@@ -33,12 +35,12 @@ class KitchenInterface extends Component {
 
   render() {
     const {
+      pupData,
       menu,
       wait,
       waitTimer,
     } = this.state;
     const {
-      popUps,
       activeFeed,
       switchActiveFeed,
       type,
@@ -50,12 +52,15 @@ class KitchenInterface extends Component {
       restart,
     } = this.props;
     const pupIsOpen = this.checkPup();
-
     return (
       <div className={type} id="ep-interface">
         <div id="ep-interface-inner">
         { pupIsOpen ?
-          <PopUp popUp={pupIsOpen} togglePup={togglePup}/>
+          <PopUp
+            popUp={pupIsOpen}
+            togglePup={togglePup}
+            pupData={pupData}
+            fetchMenu={this.menuFetchRequest}/>
         :
           <>
             <Nav
@@ -79,8 +84,53 @@ class KitchenInterface extends Component {
 
   componentDidMount() {
     const {fetchOrders} = this.props;
+    const {menu} = this.state;
+    const pupIsOpen = this.checkPup();
     this.initWaitTimer();
     fetchOrders(true);
+  }
+
+  menuFetchRequest() {
+    const {ajaxurl, handle, nonce} = this.props;
+    axios.get(
+      ajaxurl,
+      {
+        params: {
+          "action": "ki_menu_fetch",
+          "store": handle,
+          "staff_nonce": nonce,
+        }
+      }).then(response => this.menuFetchResponse(response));
+  }
+
+  menuFetchResponse(response) {
+    const data = response.data;
+    if (!data.errors && data.index.length) {
+      this.setState(prevState => {
+        return {
+          pupData: {
+            "candidates": Object.keys(data).reduce((obj,key) => {
+              if (key !== "hidden" && key !== "index") {
+                obj[key] = [];
+              }
+              return obj;
+            }, {}),
+          },
+          menu: data,
+        };
+      });
+    } else {
+      const empty = {
+        "errors": {
+           "No Products" : ["No products retrieved. Either none "
+             + "exist or your Shopify API credentials are invalid. "
+             + "Please check them credentials and try again."]
+         }
+      };
+      const fail = data.errors ? data : empty;
+      // (that.updateGeneralFail("menu-fetch"))(fail);
+      console.log(fail);
+    }
   }
 
   initWaitTimer() {

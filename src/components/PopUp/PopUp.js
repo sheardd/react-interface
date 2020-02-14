@@ -9,21 +9,18 @@ class popUp extends Component {
   constructor(props) {
     super(props);
     const {popUp} = this.props;
+    
     this.stateToSet = this.stateToSet.bind(this);
     const stateToSet = this.stateToSet(popUp.id);
-    if (stateToSet) {
-      this.state = {
-        data: stateToSet,
-      };
-    }
 
     this.stateToSet = this.stateToSet.bind(this);
     this.formSelection = this.formSelection.bind(this);
     this.updateFormSelection = this.updateFormSelection.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
+
   render() {
-    const {popUp, togglePup} = this.props;
-    const {data} = this.state;
+    const {popUp, togglePup, pupData} = this.props;
     return(
       <div id={popUp.id} className="pop-up bg-grey">
         <div id={popUp.id + "-inner"} className="pop-up-inner">
@@ -32,7 +29,7 @@ class popUp extends Component {
             description={popUp.description}
             list={popUp.list}
             togglePup={togglePup}
-            data={data}
+            pupData={pupData}
             formSelection={this.formSelection} />
         </div>
       </div>
@@ -40,21 +37,22 @@ class popUp extends Component {
   }
 
   stateToSet(context) {
-    const {list} = this.props.popUp
-    if (context === "menu") {
-      return {
-        "candidates": Object.keys(list).reduce((obj,key) => {
-          if (key !== "hidden") {
-            obj[key] = [];
-          }
-          return obj;
-        }, {}),
-      };
-    } else if (context === "driver") {
-      return {"driver": ""};
-    } else {
-      return false;
+    const {list} = this.props.popUp;
+    if (list) {
+      if (context === "menu") {
+        return {
+          "candidates": Object.keys(list).reduce((obj,key) => {
+            if (key !== "hidden") {
+              obj[key] = [];
+            }
+            return obj;
+          }, {}),
+        };
+      } else if (context === "driver") {
+        return {"driver": ""};
+      }
     }
+    return false;
   }
 
   formSelection(id, context) {
@@ -62,7 +60,6 @@ class popUp extends Component {
   }
 
   updateFormSelection(update, context) {
-    const {list} = this.props.popUp;
     return (prevState) => {
       const {data} = prevState;
       if (context === "menu") {
@@ -90,6 +87,13 @@ class popUp extends Component {
           }
         }
       }
+    }
+  }
+
+  componentDidMount() {
+    const {popUp, fetchMenu} = this.props;
+    if (popUp.id === "menu") {
+      fetchMenu();
     }
   }
 }
