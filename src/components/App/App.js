@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { omit } from 'lodash';
+import { omit, cloneDeep } from 'lodash';
 import classNames from 'classnames';
 import Interface from '../Interface';
 import FeedGrp from '../FeedGrp';
@@ -65,7 +65,8 @@ class App extends Component {
     this.setOrderTimes = this.setOrderTimes.bind(this);
     this.switchActiveFeed = this.switchActiveFeed.bind(this);
     this.toggleOrder = this.toggleOrder.bind(this);
-    this.updateOrder = this.updateOrder.bind(this);
+    this.updateOrderRequest = this.updateOrderRequest.bind(this);
+    this.updateOrderResponse = this.updateOrderResponse.bind(this);
     this.moveOrder = this.moveOrder.bind(this);
     this.togglePup = this.togglePup.bind(this);
     this.stop = this.stop.bind(this);
@@ -95,7 +96,7 @@ class App extends Component {
           activeFeed={activeFeed}
           type={type}
           toggleOrder={this.toggleOrder}
-          updateOrder={this.updateOrder}
+          updateOrderRequest={this.updateOrderRequest}
           togglePup={this.togglePup} />
         <Location>{handle.toUpperCase()}</Location>
       </ Interface>
@@ -262,7 +263,7 @@ class App extends Component {
           return o;
         } else {
           o[k] = receivedOrders[key][k];
-          o.index = [...o.index, k];
+          o.index = [...o.index, parseInt(k)];
           return o;
         }
       }, {index: []})
@@ -345,7 +346,7 @@ class App extends Component {
     }});
   }
 
-  updateOrder(e, args) {
+  updateOrderRequest(e, args) {
     e.stopPropagation();
     const {
       orderId,
@@ -353,26 +354,70 @@ class App extends Component {
       feed,
       data,
     } = args;
-    if (action === "done" || action === "revert") {
-      this.moveOrder(orderId, feed);
+    const {type, handle, nonce, ajaxurl} = this.props;
+    const {orders} = this.state;
+    const order = orders[feed][orderId];
+    let config = new FormData;
+    config.append("store", handle);
+    config.append("staff_nonce", nonce);
+    config.append("action", type + "_update_order");
+    config.append("orderId", orderId);
+    if (type === "ki") {
+      config.append("notify", order.fulfillments.length ? false : true);
+      if (order.fulfillments.length && order.fulfillments[0].status === "success") {
+        config.append("fulfillment", order.fulfillments[0].id);
+      }
+    } else {
+      config.append("json", {...order.json, 
+        delivered: action === "done" ? true : false
+      });
+    }
+    axios.post(ajaxurl, config)
+      .then(response => this.updateOrderResponse(response, feed, orders));
+  }
+
+  updateOrderResponse(response, feed, orders) {
+    if (response.status === 200) {
+      const data = JSON.parse(response.data.body);
+      let order;
+      if (data.fulfillment) {
+        // a fulfillment has either been created or updated, either attach the new fulfillment or
+        // update the existing one
+        order = orders[feed][data.fulfillment.order_id];
+        let newFulfill = [data.fulfillment];
+        order.fulfillments.forEach(f => {
+          if (f.id !== data.fulfillment.id) {
+            newFulfill.push(f);
+          }
+        });
+        order.fulfillments = newFulfill;
+      } else {
+        const order = orders[feed][data.order.id];
+        // JSON has been updated, attach the updated JSON to the existing order
+        let updtJson = JSON.parse(data.order.note_attributes[0].value);
+        order.json = updtJson;
+      }
+      this.setState(this.moveOrder(order, feed));
+    } else {
+      console.log("We got a response back, but there was something wrong with it");
+      console.log(response);
     }
   }
 
-
   /**
     * Apparently lodash 5 will drop support for omit, come up with a new
-    * solution using the keys/reduce method adopted in togglePup below.
+    * solution using the keys/reduce method adopted in togglePup below,
+    * as well as in checkCancelledDelivered and filterNewOrders further up.
     */
 
-  moveOrder(orderId, feed) {
-    this.setState((prevState) => {
+  moveOrder(order, feed) {
+    return (prevState) => {
       const {orders} = prevState;
       const {index} = orders[feed];
-      const order = orders[feed][orderId];
-      const updtdIndex = index.filter((id) => id !== orderId);
-      const updtdFeed = omit(orders[feed], orderId.toString());
+      const updtdIndex = index.filter((id) => id !== order.id);
+      const updtdFeed = omit(orders[feed], order.id.toString());
       const newFeed = (feed => feed === "open" ? "other" : "open")(feed);
-      const newIndex = [...orders[newFeed].index, orderId];
+      const newIndex = [...orders[newFeed].index, order.id];
       return {
         orders: {
           [feed]: {
@@ -382,11 +427,11 @@ class App extends Component {
           [newFeed]: {
             ...orders[newFeed],
             index: newIndex,
-            [orderId]: order,
+            [order.id]: order,
           }
         }
       }
-    });
+    };
   }
 
   togglePup(pup = false) {

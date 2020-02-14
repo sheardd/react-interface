@@ -14,7 +14,7 @@ const Order = (props) => {
     type,
     feed,
     toggleOrder,
-    updateOrder,
+    updateOrderRequest,
     togglePup,
   } = props;
   /**
@@ -46,7 +46,7 @@ const Order = (props) => {
           {order.kitchenTime ? <h3 className="order-customer time">{order.kitchenTime}</h3> : null }
           <h3 className="order-customer time target">{order.eta}</h3>
         </div>
-        <OrderButtons type={type} orderId={order.id} feed={feed} onTick={updateOrder} onDriver={togglePup}/>
+        <OrderButtons type={type} orderId={order.id} feed={feed} onTick={updateOrderRequest} onDriver={togglePup}/>
       </div>
     </div>
   );
