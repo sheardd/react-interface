@@ -5,6 +5,9 @@ import classNames from 'classnames';
 import PopUpForm from '../PopUpForm';
 import './PopUp.css';
 
+/* We're currently lifting all state from here up to KitchenInterface,
+which may require us to lift related methods as well */
+
 class popUp extends Component {
   constructor(props) {
     super(props);
@@ -13,14 +16,11 @@ class popUp extends Component {
     this.stateToSet = this.stateToSet.bind(this);
     const stateToSet = this.stateToSet(popUp.id);
 
-    this.stateToSet = this.stateToSet.bind(this);
-    this.formSelection = this.formSelection.bind(this);
-    this.updateFormSelection = this.updateFormSelection.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
   render() {
-    const {popUp, togglePup, pupData} = this.props;
+    const {popUp, togglePup, pupData, pupSelection} = this.props;
     return(
       <div id={popUp.id} className="pop-up bg-grey">
         <div id={popUp.id + "-inner"} className="pop-up-inner">
@@ -30,7 +30,7 @@ class popUp extends Component {
             list={popUp.list}
             togglePup={togglePup}
             pupData={pupData}
-            formSelection={this.formSelection} />
+            pupSelection={pupSelection} />
         </div>
       </div>
     );
@@ -53,41 +53,6 @@ class popUp extends Component {
       }
     }
     return false;
-  }
-
-  formSelection(id, context) {
-    this.setState(this.updateFormSelection(id,context));
-  }
-
-  updateFormSelection(update, context) {
-    return (prevState) => {
-      const {data} = prevState;
-      if (context === "menu") {
-        return {
-          data: {
-            candidates: 
-              Object.keys(data.candidates).reduce((obj, key) => {
-                if (key === update.collection) {
-                  if (data.candidates[key].indexOf(update.id) !== -1) {
-                    obj[key] = data.candidates[key].filter(i => i !== update.id);
-                  } else {
-                    obj[key] = [...data.candidates[key], update.id];
-                  }
-                } else {
-                  obj[key] = data.candidates[key];
-                }
-                return obj;
-              }, {})
-          }
-        }
-      } else {
-        return {
-          data: {
-            driver: update
-          }
-        }
-      }
-    }
   }
 
   componentDidMount() {

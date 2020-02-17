@@ -9,6 +9,9 @@ import './KitchenInterface.css';
 import sampleDriver from '../../sample-data/sampleDriver.js';
 import sampleErrors from '../../sample-data/sampleErrors.js';
 
+/* Move all PopUp state (containing temporary form values) up to here, 
+(most likely including related methods) */
+
 class KitchenInterface extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +34,8 @@ class KitchenInterface extends Component {
     this.waitTimerExpired = this.waitTimerExpired.bind(this);
     this.updateWaitTime = this.updateWaitTime.bind(this);
     this.checkPup = this.checkPup.bind(this);
+    this.pupSelection = this.pupSelection.bind(this);
+    this.updatePupSelection = this.updatePupSelection.bind(this);
   }
 
   render() {
@@ -48,6 +53,7 @@ class KitchenInterface extends Component {
       nonce,
       children,
       togglePup,
+      pupSelection,
       stop,
       restart,
     } = this.props;
@@ -60,6 +66,7 @@ class KitchenInterface extends Component {
             popUp={pupIsOpen}
             togglePup={togglePup}
             pupData={pupData}
+            pupSelection={this.pupSelection}
             fetchMenu={this.menuFetchRequest}/>
         :
           <>
@@ -244,6 +251,41 @@ class KitchenInterface extends Component {
       }
     }
     return result;
+  }
+
+  pupSelection(update, context) {
+    this.setState(this.updatePupSelection(update,context));
+  }
+
+  updatePupSelection(update, context) {
+    return (prevState) => {
+      const {pupData} = prevState;
+      if (context === "menu") {
+        return {
+          pupData: {
+            candidates: 
+              Object.keys(pupData.candidates).reduce((obj, key) => {
+                if (key === update.collection) {
+                  if (pupData.candidates[key].indexOf(update.id) !== -1) {
+                    obj[key] = pupData.candidates[key].filter(i => i !== update.id);
+                  } else {
+                    obj[key] = [...pupData.candidates[key], update.id];
+                  }
+                } else {
+                  obj[key] = pupData.candidates[key];
+                }
+                return obj;
+              }, {})
+          }
+        }
+      } else {
+        return {
+          pupData: {
+            driver: update
+          }
+        }
+      }
+    }
   }
 }
 
