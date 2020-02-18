@@ -114,17 +114,19 @@ class KitchenInterface extends Component {
     const data = response.data;
     if (!data.errors && data.index.length) {
       this.setState(prevState => {
-        return {
-          pupData: {
-            "candidates": Object.keys(data).reduce((obj,key) => {
+        const newState = {
+          pupData : {},
+          menu: data,
+        };
+        ["hiding", "revealing"].forEach(candidates => {
+          newState.pupData[candidates] = Object.keys(data).reduce((obj,key) => {
               if (key !== "hidden" && key !== "index") {
                 obj[key] = [];
               }
               return obj;
-            }, {}),
-          },
-          menu: data,
-        };
+            }, {});
+        });
+        return newState;
       });
     } else {
       const empty = {
@@ -257,34 +259,45 @@ class KitchenInterface extends Component {
     this.setState(this.updatePupSelection(update,context));
   }
 
+  /* Hiding processed correctly but is either not being stored in state properly or 
+  our components are checking for hide in the wrong place (probably the latter)
+  Items that have been previously hard-hidden and whose values are not present in pupData
+  throw "Cannot read property 'dips' of undefined" (both the dips in question are hidden on render currently) */
+
   updatePupSelection(update, context) {
     return (prevState) => {
       const {pupData} = prevState;
+      const updateTarget = update.checked ? "hiding" : "revealing";
+      const otherTarget = update.checked ? "revealing" : "hiding";
+      const newData = {
+        pupData: {}
+      };
       if (context === "menu") {
-        return {
-          pupData: {
-            candidates: 
-              Object.keys(pupData.candidates).reduce((obj, key) => {
-                if (key === update.collection) {
-                  if (pupData.candidates[key].indexOf(update.id) !== -1) {
-                    obj[key] = pupData.candidates[key].filter(i => i !== update.id);
-                  } else {
-                    obj[key] = [...pupData.candidates[key], update.id];
-                  }
-                } else {
-                  obj[key] = pupData.candidates[key];
-                }
-                return obj;
-              }, {})
+        let updateArray = pupData[updateTarget][update.collection];
+        let otherArray = pupData[otherTarget][update.collection];
+        if (otherArray.indexOf(update.id) !== -1) {
+          otherArray = otherArray.filter(i => i !== update.id);
+          newData.pupData[otherTarget] = {
+            ...pupData[otherTarget],
+            [update.collection]: otherArray
+          }
+        } else {
+          newData.pupData[otherTarget] = {...pupData[otherTarget]};
+        }
+        updateArray = [...updateArray, update.id];
+        newData.pupData = {
+          ...newData.pupData,
+          [updateTarget]: {
+            ...pupData[updateTarget],
+            [update.collection]: updateArray
           }
         }
       } else {
-        return {
-          pupData: {
-            driver: update
-          }
+        newData.pupData = {
+          driver: update
         }
       }
+      return newData;
     }
   }
 }
