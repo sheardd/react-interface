@@ -36,6 +36,8 @@ class KitchenInterface extends Component {
     this.checkPup = this.checkPup.bind(this);
     this.pupSelection = this.pupSelection.bind(this);
     this.updatePupSelection = this.updatePupSelection.bind(this);
+    this.menuUpdateRequest = this.menuUpdateRequest.bind(this);
+    this.menuUpdateResponse = this.menuUpdateResponse.bind(this);
   }
 
   render() {
@@ -67,7 +69,8 @@ class KitchenInterface extends Component {
             togglePup={togglePup}
             pupData={pupData}
             pupSelection={this.pupSelection}
-            fetchMenu={this.menuFetchRequest}/>
+            fetchMenu={this.menuFetchRequest}
+            submitCB={this.pupSubmitCB(pupIsOpen)}/>
         :
           <>
             <Nav
@@ -266,7 +269,7 @@ class KitchenInterface extends Component {
 
   updatePupSelection(update, context) {
     return (prevState) => {
-      const {pupData} = prevState;
+      const {pupData, menu} = prevState;
       const updateTarget = update.checked ? "hiding" : "revealing";
       const otherTarget = update.checked ? "revealing" : "hiding";
       const newData = {
@@ -281,15 +284,16 @@ class KitchenInterface extends Component {
             ...pupData[otherTarget],
             [update.collection]: otherArray
           }
+          newData.pupData[updateTarget] = {...pupData[updateTarget]};
         } else {
           newData.pupData[otherTarget] = {...pupData[otherTarget]};
-        }
-        updateArray = [...updateArray, update.id];
-        newData.pupData = {
-          ...newData.pupData,
-          [updateTarget]: {
-            ...pupData[updateTarget],
-            [update.collection]: updateArray
+          updateArray = [...updateArray, update.id];
+          newData.pupData = {
+            ...newData.pupData,
+            [updateTarget]: {
+              ...pupData[updateTarget],
+              [update.collection]: updateArray
+            }
           }
         }
       } else {
@@ -299,6 +303,44 @@ class KitchenInterface extends Component {
       }
       return newData;
     }
+  }
+
+  pupSubmitCB(pup) {
+    if (pup.id === "menu") {
+      return this.menuUpdateRequest;
+    } else {
+      return null;
+    }
+  }
+
+  menuUpdateRequest() {
+    const {ajaxurl, handle, nonce} = this.props;
+    const {menu, pupData} = this.state;
+    const products = {
+      hiding: {},
+      revealing: {}
+    }
+    let data = new FormData;
+    data.append('action', 'ki_menu_update');
+    data.append('store', handle);
+    data.append('staff_nonce', nonce);
+    ["hiding", "revealing"].forEach(key => {
+      Object.keys(pupData[key]).forEach(collection => {
+        pupData[key][collection].forEach(id => {
+          products[key][id] = menu[collection][id];
+        });
+      });
+    });
+    data.append("hiding", JSON.stringify(products.hiding));
+    data.append("revealing", JSON.stringify(products.revealing));
+    axios.post(
+      ajaxurl,
+      data
+    ).then(response => this.menuUpdateResponse(response));
+  }
+
+  menuUpdateResponse(response) {
+    console.log(response);
   }
 }
 

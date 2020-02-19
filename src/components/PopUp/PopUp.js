@@ -20,7 +20,7 @@ class popUp extends Component {
   }
 
   render() {
-    const {popUp, togglePup, pupData, pupSelection} = this.props;
+    const {popUp, togglePup, pupData, pupSelection, submitCB} = this.props;
     return(
       <div id={popUp.id} className="pop-up bg-grey">
         <div id={popUp.id + "-inner"} className="pop-up-inner">
@@ -30,7 +30,8 @@ class popUp extends Component {
             list={popUp.list}
             togglePup={togglePup}
             pupData={pupData}
-            pupSelection={pupSelection} />
+            pupSelection={pupSelection}
+            submitCB={submitCB} />
         </div>
       </div>
     );

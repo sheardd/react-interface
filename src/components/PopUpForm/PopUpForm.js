@@ -6,7 +6,7 @@ import PopUpFormList from '../PopUpFormList';
 import Button from '../Button';
 import './PopUpForm.css';
 
-const PopUpForm = ({id, description, list, togglePup, ...rest}) =>
+const PopUpForm = ({id, description, list, togglePup, submitCB, ...rest}) =>
 <form id={id + "-form"} className="pop-up-form">
   <p>{description}</p>
   {list ?
@@ -20,7 +20,7 @@ const PopUpForm = ({id, description, list, togglePup, ...rest}) =>
     <input type="hidden" name="driver-assign-shopify" id="driver-assign-shopify" value={list.current} />
   }
   <div className="btn-row">
-    <Button className="submit-button update">{id === "error" ? "Clear Log" : "Update"}</Button>
+    <Button className="submit-button update" onClick={(e) => {e.stopPropagation(); submitCB()}}>{id === "error" ? "Clear Log" : "Update"}</Button>
     <Button className="submit-button cancel" onClick={(e) => {e.stopPropagation(); togglePup()}}>Cancel</Button>
   </div>
 </form>
