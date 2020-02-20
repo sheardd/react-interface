@@ -13,7 +13,7 @@ const PopUpCollection = ({collection, products, context, hidden, pupData, pupSel
           <PopUpCollectionMenuItem
             collection={collection}
             product={products[i]}
-            checked={(!hidden[i] && pupData.hiding[collection].indexOf(i) === -1) || pupData.revealing[collection].indexOf(i) !== -1}
+            checked={(hidden.index.indexOf(i) === -1 && pupData.hiding[collection].indexOf(i) === -1) || pupData.revealing[collection].indexOf(i) !== -1}
             pupSelection={pupSelection} />
         :
           <p>{products[i].title}: {products[i].error.code} - {products[i].error.message}</p>
