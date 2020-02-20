@@ -36,8 +36,10 @@ class KitchenInterface extends Component {
     this.checkPup = this.checkPup.bind(this);
     this.pupSelection = this.pupSelection.bind(this);
     this.updatePupSelection = this.updatePupSelection.bind(this);
+    this.checkMenuState = this.checkMenuState.bind(this);
     this.menuUpdateRequest = this.menuUpdateRequest.bind(this);
     this.menuUpdateResponse = this.menuUpdateResponse.bind(this);
+    this.defaultMenuSelection = this.defaultMenuSelection.bind(this);
   }
 
   render() {
@@ -69,7 +71,7 @@ class KitchenInterface extends Component {
             togglePup={togglePup}
             pupData={pupData}
             pupSelection={this.pupSelection}
-            fetchMenu={this.menuFetchRequest}
+            checkMenuState={this.checkMenuState}
             submitCB={this.pupSubmitCB(pupIsOpen)}/>
         :
           <>
@@ -100,6 +102,17 @@ class KitchenInterface extends Component {
     fetchOrders(true);
   }
 
+  checkMenuState() {
+    const {menu} = this.state;
+    if (!menu) {
+      this.menuFetchRequest();
+    } else {
+      this.setState({
+        pupData: this.defaultMenuSelection(menu)
+      });
+    }
+  }
+
   menuFetchRequest() {
     const {ajaxurl, handle, nonce} = this.props;
     axios.get(
@@ -121,14 +134,7 @@ class KitchenInterface extends Component {
           pupData : {},
           menu: data,
         };
-        ["hiding", "revealing"].forEach(candidates => {
-          newState.pupData[candidates] = Object.keys(data).reduce((obj,key) => {
-              if (key !== "hidden" && key !== "index") {
-                obj[key] = [];
-              }
-              return obj;
-            }, {});
-        });
+        newState.pupData = this.defaultMenuSelection(data);
         return newState;
       });
     } else {
@@ -262,11 +268,6 @@ class KitchenInterface extends Component {
     this.setState(this.updatePupSelection(update,context));
   }
 
-  /* Hiding processed correctly but is either not being stored in state properly or 
-  our components are checking for hide in the wrong place (probably the latter)
-  Items that have been previously hard-hidden and whose values are not present in pupData
-  throw "Cannot read property 'dips' of undefined" (both the dips in question are hidden on render currently) */
-
   updatePupSelection(update, context) {
     return (prevState) => {
       const {pupData, menu} = prevState;
@@ -314,13 +315,14 @@ class KitchenInterface extends Component {
   }
 
   menuUpdateRequest() {
-    const {ajaxurl, handle, nonce} = this.props;
+    const {ajaxurl, handle, nonce, togglePup} = this.props;
     const {menu, pupData} = this.state;
     const products = {
       hiding: {},
       revealing: {}
     }
     let data = new FormData;
+    togglePup();
     data.append('action', 'ki_menu_update');
     data.append('store', handle);
     data.append('staff_nonce', nonce);
@@ -340,7 +342,55 @@ class KitchenInterface extends Component {
   }
 
   menuUpdateResponse(response) {
-    console.log(response);
+    const data = response.data;
+    this.setState(prevState => {
+      const {menu, pupData} = prevState;
+      const newState = {};
+      if (!data.errors) {
+        newState.menu = {...prevState.menu};
+        let productErrors = [];
+        newState.menu.hidden.index = menu.hidden.index.filter(
+          i => !data.revealing[i] || data.revealing[i].errors
+        );
+        data.hiding.index.forEach(i => {
+          let product = data.hiding[i];
+          if (!product.error) {
+            newState.menu[product.collection][product.id].tags = product.tags;
+            newState.menu.hidden.index = [...newState.menu.hidden.index, product.id];
+          } else {
+            productErrors = [...productErrors, product];
+          }
+        });
+        data.revealing.index.forEach(i => {
+          let product = data.revealing[i];
+          if (!product.error) {
+            newState.menu[product.collection][product.id].tags = product.tags;
+          } else {
+            productErrors = [...productErrors, product];
+          }
+        });
+        if (productErrors.length) {
+          // that.updateFail(productErrors, "menu-submit");
+        } else {
+          // that.updateStatus("complete");
+        }
+      }
+      newState.pupData = this.defaultMenuSelection(newState.menu);
+      return newState;
+    });
+  }
+
+  defaultMenuSelection(data) {
+    const newSelection = {};
+    ["hiding", "revealing"].forEach(candidates => {
+      newSelection[candidates] = Object.keys(data).reduce((obj,key) => {
+          if (key !== "hidden" && key !== "index") {
+            obj[key] = [];
+          }
+          return obj;
+        }, {});
+    });
+    return newSelection;
   }
 }
 

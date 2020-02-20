@@ -57,9 +57,9 @@ class popUp extends Component {
   }
 
   componentDidMount() {
-    const {popUp, fetchMenu} = this.props;
+    const {popUp, checkMenuState} = this.props;
     if (popUp.id === "menu") {
-      fetchMenu();
+      checkMenuState();
     }
   }
 }
