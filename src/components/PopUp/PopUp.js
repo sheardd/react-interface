@@ -57,9 +57,11 @@ class popUp extends Component {
   }
 
   componentDidMount() {
-    const {popUp, checkMenuState} = this.props;
+    const {popUp, checkMenuState, driverFetchRequest} = this.props;
     if (popUp.id === "menu") {
       checkMenuState();
+    } else if (popUp.id === "driver") {
+      driverFetchRequest(popUp.orderId);
     }
   }
 }

@@ -41,12 +41,13 @@ class App extends Component {
           open: false,
           id: "driver",
           description: "Tap a Driver's name, or unassign, then tap confirm.",
+          current: null,
         },
         error: {
           open: false,
           id: "error",
           description: false,
-          list: []
+          list: [],
         },
         settle: {
           open: false,
@@ -434,7 +435,7 @@ class App extends Component {
     };
   }
 
-  togglePup(pup = false) {
+  togglePup(pup = false, data = null) {
     this.setState((prevState) => {
       const {popUps} = prevState;
       const updtdPups = Object.keys(popUps).reduce((obj, key) => {
@@ -444,10 +445,11 @@ class App extends Component {
         };
         return obj;
       }, {});
+      if (pup === "driver") {
+        updtdPups.driver.current = data;
+      }
       return {
-        popUps: {
-          ...updtdPups
-        }
+        popUps: updtdPups
       }
     });
   }

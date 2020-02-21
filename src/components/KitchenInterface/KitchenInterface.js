@@ -6,7 +6,6 @@ import PopUp from '../PopUp';
 import Nav from '../Nav';
 import Status from '../Status';
 import './KitchenInterface.css';
-import sampleDriver from '../../sample-data/sampleDriver.js';
 import sampleErrors from '../../sample-data/sampleErrors.js';
 
 /* Move all PopUp state (containing temporary form values) up to here, 
@@ -18,7 +17,7 @@ class KitchenInterface extends Component {
     this.state = {
       pupData: null,
       menu: null,
-      driver: sampleDriver,
+      drivers: null,
       errors: sampleErrors,
       wait: {
         wt_updated: null,
@@ -40,6 +39,8 @@ class KitchenInterface extends Component {
     this.menuUpdateRequest = this.menuUpdateRequest.bind(this);
     this.menuUpdateResponse = this.menuUpdateResponse.bind(this);
     this.defaultMenuSelection = this.defaultMenuSelection.bind(this);
+    this.driverFetchRequest = this.driverFetchRequest.bind(this);
+    this.driverAssignRequest = this.driverAssignRequest.bind(this);
   }
 
   render() {
@@ -72,6 +73,7 @@ class KitchenInterface extends Component {
             pupData={pupData}
             pupSelection={this.pupSelection}
             checkMenuState={this.checkMenuState}
+            driverFetchRequest={this.driverFetchRequest}
             submitCB={this.pupSubmitCB(pupIsOpen)}/>
         :
           <>
@@ -96,8 +98,6 @@ class KitchenInterface extends Component {
 
   componentDidMount() {
     const {fetchOrders} = this.props;
-    const {menu} = this.state;
-    const pupIsOpen = this.checkPup();
     this.initWaitTimer();
     fetchOrders(true);
   }
@@ -245,7 +245,7 @@ class KitchenInterface extends Component {
 
   checkPup() {
     const {popUps} = this.props;
-    const {menu, driver, errors} = this.state;
+    const {menu, drivers, errors} = this.state;
     const keys = Object.keys(popUps);
     let result = false;
     for (let i = 0; i < keys.length; i++) {
@@ -254,7 +254,7 @@ class KitchenInterface extends Component {
         if (result.id === "menu") {
           result.list = menu;
         } else if (result.id === "driver") {
-          result.list = driver;
+          result.list = drivers;
         } else if (result.id === "error") {
           result.list = errors;
         }
@@ -299,7 +299,8 @@ class KitchenInterface extends Component {
         }
       } else {
         newData.pupData = {
-          driver: update
+          current: update,
+          orderId: newData.pupData.orderId
         }
       }
       return newData;
@@ -309,8 +310,8 @@ class KitchenInterface extends Component {
   pupSubmitCB(pup) {
     if (pup.id === "menu") {
       return this.menuUpdateRequest;
-    } else {
-      return null;
+    } else if (pup.id === "driver") {
+      return this.driverAssignRequest;
     }
   }
 
@@ -391,6 +392,53 @@ class KitchenInterface extends Component {
         }, {});
     });
     return newSelection;
+  }
+
+  driverFetchRequest(orderId) {
+    const {ajaxurl, handle, nonce} = this.props;
+    axios.get(
+      ajaxurl,
+      {
+        params: {
+          "action": "ki_driver_assign_fetch",
+          "store": handle,
+          "staff_nonce": nonce,
+        }
+      }).then(response => this.driverFetchResponse(response,orderId));
+  }
+
+  driverFetchResponse(response,orderId) {
+    const data = response.data;
+    this.setState(prevState => {
+      const newState = {};
+      if (data) {
+        return {
+          pupData : {
+            current: null,
+            orderId: orderId,
+          },
+          drivers: data
+        };
+      } else {
+        const empty = {
+          "errors": {
+             "No Data" : ["Please check your internet connection and try again."]
+           }
+        };
+        const fail = data.errors ? response : empty;
+        // (that.updateGeneralFail("driver-fetch"))(fail);
+      }
+    });
+  }
+
+  driverAssignRequest() {
+    const {ajaxurl, handle, nonce, togglePup} = this.props;
+    // let data = new FormData;
+    // togglePup();
+    // axios.post(
+    //   ajaxurl,
+    //   data
+    // ).then(response => this.menuUpdateResponse(response));
   }
 }
 
