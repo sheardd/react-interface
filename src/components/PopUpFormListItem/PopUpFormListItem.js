@@ -5,20 +5,20 @@ import classNames from 'classnames';
 import PopUpCollection from '../PopUpCollection';
 import './PopUpFormListItem.css';
 
-const PopUpFormListItem = ({context, item, i, formSelection, ...rest}) => {
+const PopUpFormListItem = ({context, item, i, pupSelection, ...rest}) => {
   const title = context !== "error" ? i.toUpperCase() : (item.index ? "Menu Update Error" : item.code);
   return(
     <li className="pop-up-li" key={i}>
       {context === "driver" ?
         <input type="radio" id={"assign-" + title}
           value={title} name="driver-assign-radio"
-          onChange={() => formSelection(title, "driver")}/>
+          onChange={() => pupSelection(title, "driver")}/>
       :
         null
       }
       <label htmlFor={context === "driver" ? "assign-" + title : null} ><h3 className="pop-up-li-title">{title}</h3></label>
       {context === "menu" ?
-        <PopUpCollection collection={i} products={item} context={context} formSelection={formSelection} {...rest}/>
+        <PopUpCollection collection={i} products={item} context={context} pupSelection={pupSelection} {...rest}/>
       :
         null
       }
