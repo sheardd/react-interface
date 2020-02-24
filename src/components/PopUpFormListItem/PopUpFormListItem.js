@@ -12,7 +12,7 @@ const PopUpFormListItem = ({context, item, i, pupSelection, ...rest}) => {
       {context === "driver" ?
         <input type="radio" id={"assign-" + title}
           value={title} name="driver-assign-radio"
-          onChange={() => pupSelection(title, "driver")}/>
+          onChange={() => pupSelection(i, "driver")}/>
       :
         null
       }

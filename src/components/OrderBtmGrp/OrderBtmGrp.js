@@ -36,6 +36,13 @@ const OrderBtmGrp = ({order, type}) => {
         <OrderInfo className="order-customer shopify" title="Shopify ID:">
           {order.order_number}
         </OrderInfo>
+        {order.json.driver ?
+          <OrderInfo className="order-customer driver" title="Driver:">
+          {order.json.driver.toUpperCase()}
+        </OrderInfo>
+        :
+          null
+        }
       </div>
     </div>
   );

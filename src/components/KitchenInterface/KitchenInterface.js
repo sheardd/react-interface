@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
+import { cloneDeep } from 'lodash';
 import PopUp from '../PopUp';
 import Nav from '../Nav';
 import Status from '../Status';
@@ -300,7 +301,8 @@ class KitchenInterface extends Component {
       } else {
         newData.pupData = {
           current: update,
-          orderId: newData.pupData.orderId
+          orderId: pupData.orderId,
+          context: pupData.context
         }
       }
       return newData;
@@ -394,7 +396,7 @@ class KitchenInterface extends Component {
     return newSelection;
   }
 
-  driverFetchRequest(orderId) {
+  driverFetchRequest(orderId, context) {
     const {ajaxurl, handle, nonce} = this.props;
     axios.get(
       ajaxurl,
@@ -404,10 +406,10 @@ class KitchenInterface extends Component {
           "store": handle,
           "staff_nonce": nonce,
         }
-      }).then(response => this.driverFetchResponse(response,orderId));
+      }).then(response => this.driverFetchResponse(response, orderId, context));
   }
 
-  driverFetchResponse(response,orderId) {
+  driverFetchResponse(response, orderId, context) {
     const data = response.data;
     this.setState(prevState => {
       const newState = {};
@@ -415,7 +417,8 @@ class KitchenInterface extends Component {
         return {
           pupData : {
             current: null,
-            orderId: orderId,
+            orderId,
+            context,
           },
           drivers: data
         };
@@ -432,13 +435,65 @@ class KitchenInterface extends Component {
   }
 
   driverAssignRequest() {
-    const {ajaxurl, handle, nonce, togglePup} = this.props;
-    // let data = new FormData;
-    // togglePup();
-    // axios.post(
-    //   ajaxurl,
-    //   data
-    // ).then(response => this.menuUpdateResponse(response));
+    const {ajaxurl, handle, nonce, togglePup, orders} = this.props;
+    const {pupData} = this.state;
+    const order = orders.open[pupData.orderId] || orders.other[pupData.orderId];
+    const updtJson = cloneDeep(order.json);
+    updtJson.driver = pupData.current !== "unassign" ? pupData.current : "";
+    let data = new FormData;
+    togglePup();
+    data.append('action', 'ki_driver_assign');
+    data.append('store', handle);
+    data.append('staff_nonce', nonce);
+    data.append('orderId', pupData.orderId);
+    data.append('json', JSON.stringify(updtJson));
+    axios.post(
+      ajaxurl,
+      data
+    ).then(response => this.driverAssignResponse(response, pupData));
+  }
+
+  driverAssignResponse(response, pupData) {
+    this.setState(prevState => {
+      const {orders} = this.props;
+      const error = {
+        "errors": {}
+      };
+      if (response.data.update) {
+        const data = JSON.parse(response.data.update.body);
+        if (!data.errors) {
+          const feed = (orders.open[data.order.id] && pupData.context === "open")
+            ? "open" : "other";
+          const order = orders[feed][data.order.id];
+          order.json = JSON.parse(data.order.note_attributes[0].value);
+          order.note_attributes = order.note_attributes.map(pair => {
+            if (pair.key === "driver") {
+              pair.value = order.json.driver;
+            }
+              return pair;
+          });
+          return {
+            orders: {
+              ...orders,
+              [feed] : {
+                ...orders[feed],
+                [order.id]: order,
+              }
+            }
+          };
+        } else {
+          error.errors["Shopify Error"] = [response.errors];
+          // (that.updateGeneralFail("driver-submit"))(error);
+        }
+      } else {
+        error.errors["Response is Empty"] = ["It is probable "
+          + "that the driver was not assigned, but you can restart the interface and open "
+          + "Driver Assign for the order again to verify if one is assigned. To avoid this "
+          + "error in future, please check your internet connection and Shopify "
+          + "credentials for this location, and try again."];
+        // (that.updateGeneralFail("driver-submit"))(error);
+      }
+  });
   }
 }
 

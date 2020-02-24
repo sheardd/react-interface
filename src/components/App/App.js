@@ -446,7 +446,8 @@ class App extends Component {
         return obj;
       }, {});
       if (pup === "driver") {
-        updtdPups.driver.current = data;
+        updtdPups.driver.current = data.orderId;
+        updtdPups.driver.context = data.feed;
       }
       return {
         popUps: updtdPups

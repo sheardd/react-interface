@@ -5,17 +5,10 @@ import classNames from 'classnames';
 import PopUpForm from '../PopUpForm';
 import './PopUp.css';
 
-/* We're currently lifting all state from here up to KitchenInterface,
-which may require us to lift related methods as well */
-
 class popUp extends Component {
   constructor(props) {
     super(props);
     const {popUp} = this.props;
-    
-    this.stateToSet = this.stateToSet.bind(this);
-    const stateToSet = this.stateToSet(popUp.id);
-
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
@@ -37,31 +30,17 @@ class popUp extends Component {
     );
   }
 
-  stateToSet(context) {
-    const {list} = this.props.popUp;
-    if (list) {
-      if (context === "menu") {
-        return {
-          "candidates": Object.keys(list).reduce((obj,key) => {
-            if (key !== "hidden") {
-              obj[key] = [];
-            }
-            return obj;
-          }, {}),
-        };
-      } else if (context === "driver") {
-        return {"driver": ""};
-      }
-    }
-    return false;
-  }
-
   componentDidMount() {
-    const {popUp, checkMenuState, driverFetchRequest} = this.props;
+    const {
+      popUp,
+      pupData,
+      checkMenuState,
+      driverFetchRequest,
+    } = this.props;
     if (popUp.id === "menu") {
       checkMenuState();
     } else if (popUp.id === "driver") {
-      driverFetchRequest(popUp.orderId);
+      driverFetchRequest(popUp.current, popUp.context);
     }
   }
 }
