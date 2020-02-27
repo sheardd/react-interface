@@ -426,7 +426,6 @@ class KitchenInterface extends Component {
       const {setUpdateStatus} = this.props;
       const newState = {};
       if (data) {
-        setUpdateStatus("done");
         return {
           pupData : {
             current: null,
@@ -451,21 +450,25 @@ class KitchenInterface extends Component {
   driverAssignRequest() {
     const {ajaxurl, handle, nonce, togglePup, orders, setUpdateStatus} = this.props;
     const {pupData} = this.state;
-    const order = orders.open[pupData.orderId] || orders.other[pupData.orderId];
-    const updtJson = cloneDeep(order.json);
-    updtJson.driver = pupData.current !== "unassign" ? pupData.current : "";
-    let data = new FormData;
     togglePup();
-    data.append('action', 'ki_driver_assign');
-    data.append('store', handle);
-    data.append('staff_nonce', nonce);
-    data.append('orderId', pupData.orderId);
-    data.append('json', JSON.stringify(updtJson));
-    setUpdateStatus(true);
-    axios.post(
-      ajaxurl,
-      data
-    ).then(response => this.driverAssignResponse(response, pupData));
+    if (pupData.current !== null) {
+      const order = orders.open[pupData.orderId] || orders.other[pupData.orderId];
+      const updtJson = cloneDeep(order.json);
+      updtJson.driver = pupData.current !== "unassign" ? pupData.current : "";
+      let data = new FormData;
+      data.append('action', 'ki_driver_assign');
+      data.append('store', handle);
+      data.append('staff_nonce', nonce);
+      data.append('orderId', pupData.orderId);
+      data.append('json', JSON.stringify(updtJson));
+      setUpdateStatus(true);
+      axios.post(
+        ajaxurl,
+        data
+      ).then(response => this.driverAssignResponse(response, pupData));
+    } else {
+      return null;
+    }
   }
 
   driverAssignResponse(response, pupData) {
