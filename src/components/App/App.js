@@ -377,6 +377,7 @@ class App extends Component {
         delivered: action === "done" ? true : false
       });
     }
+    this.setUpdateStatus(true);
     axios.post(ajaxurl, config)
       .then(response => this.updateOrderResponse(response, feed, orders));
   }
@@ -402,8 +403,10 @@ class App extends Component {
         let updtJson = JSON.parse(data.order.note_attributes[0].value);
         order.json = updtJson;
       }
+      this.setUpdateStatus("done");
       this.setState(this.moveOrder(order, feed));
     } else {
+      this.setUpdateStatus("error");
       console.log("We got a response back, but there was something wrong with it");
       console.log(response);
     }
