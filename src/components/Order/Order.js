@@ -32,8 +32,6 @@ const Order = (props) => {
   return (
     <div
     className={orderClasses}
-    data-shopify={order.id}
-    data-fulfill={order.fulfillments[0].id}
     style={{order: order.position}}
     onClick={() => toggleOrder(order.id, feed)}>
       <div className="order-inner">
