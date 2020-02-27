@@ -470,7 +470,7 @@ class App extends Component {
     this.setState(prevState => {
       const hideStatus = () => this.setUpdateStatus(false);
       if (status === "done" && prevState.updateStatus !== "error") {
-        setTimeout(hideStatus, 5000);
+        setTimeout(hideStatus, 1000);
       }
       return {
         updateStatus: prevState.updateStatus === "error" ? prevState.updateStatus : status
