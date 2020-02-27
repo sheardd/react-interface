@@ -31,6 +31,7 @@ class App extends Component {
       shouldPoll: null,
       activePoll: null,
       pollTimeout: null,
+      updateStatus: false,
       popUps: {
         menu: {
           open: false,
@@ -70,13 +71,14 @@ class App extends Component {
     this.updateOrderResponse = this.updateOrderResponse.bind(this);
     this.moveOrder = this.moveOrder.bind(this);
     this.togglePup = this.togglePup.bind(this);
+    this.setUpdateStatus = this.setUpdateStatus.bind(this);
     this.stop = this.stop.bind(this);
     this.restart = this.restart.bind(this);
   }
 
   render() {
     const {type, handle, nonce, ajaxurl} = this.props;
-    const {wait, activeFeed, orders, popUps} = this.state;
+    const {wait, activeFeed, orders, popUps, updateStatus} = this.state;
     return (
       <Interface
       type={type}
@@ -90,6 +92,8 @@ class App extends Component {
       activeFeed={activeFeed}
       switchActiveFeed={this.switchActiveFeed}
       togglePup={this.togglePup}
+      updateStatus={updateStatus}
+      setUpdateStatus={this.setUpdateStatus}
       stop={this.stop}
       restart={this.restart} >
         <FeedGrp
@@ -455,6 +459,22 @@ class App extends Component {
     });
   }
 
+  setUpdateStatus(status) {
+    // WE NEED TO CHECK FOR ERRORS BEFORE SETTING ANY STATUS THAT WILL HIDE THE UPDATE STATUS
+    // maybe check if updateStatus is currently set to "error" or if the new status is "error",
+    // and if it's coming from the clear log CB then set status to "clear" to override this
+    // status and reset to false.
+    this.setState(prevState => {
+      const hideStatus = () => this.setUpdateStatus(false);
+      if (status === "done" && prevState.updateStatus !== "error") {
+        setTimeout(hideStatus, 5000);
+      }
+      return {
+        updateStatus: prevState.updateStatus === "error" ? prevState.updateStatus : status
+      };
+    });
+  }
+
   stop() {
     const root = document.getElementById('root');
     root.classList.remove("open");
@@ -462,10 +482,6 @@ class App extends Component {
   }
 
   restart() {
-    // we should store wait time data in KitchenInterface state, and add a method to
-    // KitchenInterface's componentDidMount to pull in wait time data fresh each time,
-    // otherwise when we restart we're potentially using old data from outside the app
-    // before it was initialised.
     this.setState({orders: sampleOrders, activeFeed: "open"});
   }
 

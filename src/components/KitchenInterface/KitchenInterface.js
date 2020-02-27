@@ -57,8 +57,10 @@ class KitchenInterface extends Component {
       type,
       handle,
       nonce,
+      updateStatus,
       children,
       togglePup,
+      setUpdateStatus,
       pupSelection,
       stop,
       restart,
@@ -89,7 +91,7 @@ class KitchenInterface extends Component {
               stop={stop}
               restart={restart} />
             {children}
-            <Status togglePup={togglePup}/>
+            <Status togglePup={togglePup} updateStatus={updateStatus}/>
           </>
         }
         </div>
@@ -129,6 +131,7 @@ class KitchenInterface extends Component {
 
   menuFetchResponse(response) {
     const data = response.data;
+    const {setUpdateStatus} = this.props;
     if (!data.errors && data.index.length) {
       this.setState(prevState => {
         const newState = {
@@ -148,6 +151,7 @@ class KitchenInterface extends Component {
       };
       const fail = data.errors ? data : empty;
       // (that.updateGeneralFail("menu-fetch"))(fail);
+      setUpdateStatus("error");
       console.log(fail);
     }
   }
@@ -175,12 +179,13 @@ class KitchenInterface extends Component {
         }
       ).then(
         response => {
-          this.setState(
-            {
-              wait: {
-                wt_updated: parseInt(response.data.wait.wt_updated),
-                wait_time: parseInt(response.data.wait.wait_time),
-              }
+          this.setState(prevState => {
+            return {
+                wait: {
+                  wt_updated: parseInt(response.data.wait.wt_updated),
+                  wait_time: parseInt(response.data.wait.wait_time),
+                }
+              };
             },
             this.initWaitTimer
           )
@@ -222,17 +227,19 @@ class KitchenInterface extends Component {
   }
 
   updateWaitTime(time) {
-    const {ajaxurl, handle, nonce} = this.props;
+    const {ajaxurl, handle, nonce, setUpdateStatus} = this.props;
     let data = new FormData;
     data.append('action', 'ki_update_wait_time');
     data.append('store', handle);
     data.append('staff_nonce', nonce);
     data.append('time', time);
+    setUpdateStatus(true);
     axios.post(
       ajaxurl,
       data
     ).then(response => {
       const {wait} = this.state;
+      setUpdateStatus("done");
       this.setState({
         wait: {
           wt_updated: response.data.wait.wt_updated,
@@ -318,7 +325,7 @@ class KitchenInterface extends Component {
   }
 
   menuUpdateRequest() {
-    const {ajaxurl, handle, nonce, togglePup} = this.props;
+    const {ajaxurl, handle, nonce, togglePup, setUpdateStatus} = this.props;
     const {menu, pupData} = this.state;
     const products = {
       hiding: {},
@@ -338,6 +345,7 @@ class KitchenInterface extends Component {
     });
     data.append("hiding", JSON.stringify(products.hiding));
     data.append("revealing", JSON.stringify(products.revealing));
+    setUpdateStatus(true);
     axios.post(
       ajaxurl,
       data
@@ -348,6 +356,7 @@ class KitchenInterface extends Component {
     const data = response.data;
     this.setState(prevState => {
       const {menu, pupData} = prevState;
+      const {setUpdateStatus} = this.props;
       const newState = {};
       if (!data.errors) {
         newState.menu = {...prevState.menu};
@@ -374,8 +383,10 @@ class KitchenInterface extends Component {
         });
         if (productErrors.length) {
           // that.updateFail(productErrors, "menu-submit");
+          setUpdateStatus("error");
         } else {
           // that.updateStatus("complete");
+          setUpdateStatus("done");
         }
       }
       newState.pupData = this.defaultMenuSelection(newState.menu);
@@ -412,8 +423,10 @@ class KitchenInterface extends Component {
   driverFetchResponse(response, orderId, context) {
     const data = response.data;
     this.setState(prevState => {
+      const {setUpdateStatus} = this.props;
       const newState = {};
       if (data) {
+        setUpdateStatus("done");
         return {
           pupData : {
             current: null,
@@ -429,13 +442,14 @@ class KitchenInterface extends Component {
            }
         };
         const fail = data.errors ? response : empty;
+        setUpdateStatus("error");
         // (that.updateGeneralFail("driver-fetch"))(fail);
       }
     });
   }
 
   driverAssignRequest() {
-    const {ajaxurl, handle, nonce, togglePup, orders} = this.props;
+    const {ajaxurl, handle, nonce, togglePup, orders, setUpdateStatus} = this.props;
     const {pupData} = this.state;
     const order = orders.open[pupData.orderId] || orders.other[pupData.orderId];
     const updtJson = cloneDeep(order.json);
@@ -447,6 +461,7 @@ class KitchenInterface extends Component {
     data.append('staff_nonce', nonce);
     data.append('orderId', pupData.orderId);
     data.append('json', JSON.stringify(updtJson));
+    setUpdateStatus(true);
     axios.post(
       ajaxurl,
       data
@@ -455,7 +470,7 @@ class KitchenInterface extends Component {
 
   driverAssignResponse(response, pupData) {
     this.setState(prevState => {
-      const {orders} = this.props;
+      const {orders, setUpdateStatus} = this.props;
       const error = {
         "errors": {}
       };
@@ -472,6 +487,7 @@ class KitchenInterface extends Component {
             }
               return pair;
           });
+          setUpdateStatus("done");
           return {
             orders: {
               ...orders,
@@ -483,6 +499,7 @@ class KitchenInterface extends Component {
           };
         } else {
           error.errors["Shopify Error"] = [response.errors];
+          setUpdateStatus("error");
           // (that.updateGeneralFail("driver-submit"))(error);
         }
       } else {
@@ -491,6 +508,7 @@ class KitchenInterface extends Component {
           + "Driver Assign for the order again to verify if one is assigned. To avoid this "
           + "error in future, please check your internet connection and Shopify "
           + "credentials for this location, and try again."];
+          setUpdateStatus("error");
         // (that.updateGeneralFail("driver-submit"))(error);
       }
   });
