@@ -131,7 +131,7 @@ class KitchenInterface extends Component {
 
   menuFetchResponse(response) {
     const data = response.data;
-    const {setUpdateStatus} = this.props;
+    const {setUpdateStatus,logError} = this.props;
     if (!data.errors && data.index.length) {
       this.setState(prevState => {
         const newState = {
@@ -150,9 +150,8 @@ class KitchenInterface extends Component {
          }
       };
       const fail = data.errors ? data : empty;
-      // (that.updateGeneralFail("menu-fetch"))(fail);
       setUpdateStatus("error");
-      console.log(fail);
+      logError(fail);
     }
   }
 
@@ -356,7 +355,7 @@ class KitchenInterface extends Component {
     const data = response.data;
     this.setState(prevState => {
       const {menu, pupData} = prevState;
-      const {setUpdateStatus} = this.props;
+      const {setUpdateStatus, logError} = this.props;
       const newState = {};
       if (!data.errors) {
         newState.menu = {...prevState.menu};
@@ -384,10 +383,12 @@ class KitchenInterface extends Component {
         if (productErrors.length) {
           // that.updateFail(productErrors, "menu-submit");
           setUpdateStatus("error");
+          logError(productErrors);
         } else {
-          // that.updateStatus("complete");
           setUpdateStatus("done");
         }
+      } else {
+        logError(data)
       }
       newState.pupData = this.defaultMenuSelection(newState.menu);
       return newState;
@@ -423,7 +424,7 @@ class KitchenInterface extends Component {
   driverFetchResponse(response, orderId, context) {
     const data = response.data;
     this.setState(prevState => {
-      const {setUpdateStatus} = this.props;
+      const {setUpdateStatus, logError} = this.props;
       const newState = {};
       if (data) {
         return {
@@ -442,6 +443,7 @@ class KitchenInterface extends Component {
         };
         const fail = data.errors ? response : empty;
         setUpdateStatus("error");
+        logError(fail);
         // (that.updateGeneralFail("driver-fetch"))(fail);
       }
     });
@@ -473,7 +475,7 @@ class KitchenInterface extends Component {
 
   driverAssignResponse(response, pupData) {
     this.setState(prevState => {
-      const {orders, setUpdateStatus} = this.props;
+      const {orders, setUpdateStatus, logError} = this.props;
       const error = {
         "errors": {}
       };
@@ -504,6 +506,7 @@ class KitchenInterface extends Component {
           error.errors["Shopify Error"] = [response.errors];
           setUpdateStatus("error");
           // (that.updateGeneralFail("driver-submit"))(error);
+          logError(error);
         }
       } else {
         error.errors["Response is Empty"] = ["It is probable "
@@ -512,6 +515,7 @@ class KitchenInterface extends Component {
           + "error in future, please check your internet connection and Shopify "
           + "credentials for this location, and try again."];
           setUpdateStatus("error");
+          logError(error);
         // (that.updateGeneralFail("driver-submit"))(error);
       }
   });

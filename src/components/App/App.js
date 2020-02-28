@@ -28,7 +28,7 @@ class App extends Component {
           index: []
         }
       },
-      shouldPoll: null,
+      shouldPoll: false,
       activePoll: null,
       pollTimeout: null,
       updateStatus: false,
@@ -72,6 +72,7 @@ class App extends Component {
     this.moveOrder = this.moveOrder.bind(this);
     this.togglePup = this.togglePup.bind(this);
     this.setUpdateStatus = this.setUpdateStatus.bind(this);
+    this.logError = this.logError.bind(this);
     this.stop = this.stop.bind(this);
     this.restart = this.restart.bind(this);
   }
@@ -94,6 +95,7 @@ class App extends Component {
       togglePup={this.togglePup}
       updateStatus={updateStatus}
       setUpdateStatus={this.setUpdateStatus}
+      logError={this.logError}
       stop={this.stop}
       restart={this.restart} >
         <FeedGrp
@@ -123,19 +125,20 @@ class App extends Component {
     const {shouldPoll, activePoll, pollTimeout} = this.state;
     if (type === "di" || (type === "ki" && (init || shouldPoll))) {
       this.fetchOrdersApi(type)
-        .then(response => this.parseOrders(response, type))
+        .then(response => this.parseOrders(response, type),
+          error => Promise.reject(error))
         .then(
           orders => {
             if (this._isMounted) {
               this.setState(this.updateOrders(orders, type));
             }
           },
+          error => Promise.reject(error))
+        .catch(
           error => {
-            console.log("An error occurred when parsing orders");
+            this.logError(error);
             if (this._isMounted) {
-              this.setState({
-                shouldPoll: false
-              });
+              this.setState({shouldPoll: false});
             }
           }
         );
@@ -156,10 +159,10 @@ class App extends Component {
             "type": type
           }
         });
-      if (response.status === 200) {
-        resolve(response);
-      } else {
+      if (response.data.errors || response.status !== 200) {
         reject(response);
+      } else {
+        resolve(response);
       }
     });
   }
@@ -197,7 +200,7 @@ class App extends Component {
           ...sortedOrders.other,
           index: otherIn,
         }
-      }
+      };
     } else {
       return null;
     }
@@ -231,7 +234,7 @@ class App extends Component {
       }
       if (type === "ki") {
         newState.shouldPoll = true;
-        newState.pollTimeout = setTimeout(this.fetchOrders, 5000, type);
+        newState.pollTimeout = setTimeout(this.fetchOrders, 5000);
       }
       return newState;
     }
@@ -407,8 +410,7 @@ class App extends Component {
       this.setState(this.moveOrder(order, feed));
     } else {
       this.setUpdateStatus("error");
-      console.log("We got a response back, but there was something wrong with it");
-      console.log(response);
+      this.logError(response);
     }
   }
 
@@ -478,11 +480,16 @@ class App extends Component {
     });
   }
 
+  logError(data) {
+    console.log("There's a snake in mah boot",data);
+  }
+
   /**
     * Called by
     * driverFetchResponse
     * driverAssignResponse (twice)
     * menuFetchResponse
+    * menuUpdateResponse
     *
     * Rewrite both of these functions into a single error function, which calls a supplementary
     * "compileComplexError" function if the current error contains multiple
@@ -519,7 +526,7 @@ class App extends Component {
   //   }
 
   //   /** Called by:
-  //     * menuUpdateResponse
+  //     * menuUpdateResponse (again)
   //     * updateGeneralFail
          // * Rewrite both of these functions into a single error function, which calls a supplementary
          // * "compileComplexError" function if the current error contains multiple
