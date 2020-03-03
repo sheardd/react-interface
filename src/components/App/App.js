@@ -83,7 +83,7 @@ class App extends Component {
   render() {
     const {type, handle, nonce, ajaxurl} = this.props;
     const {wait, activeFeed, orders, errors, popUps, updateStatus} = this.state;
-    console.log(errors);
+    // console.log(errors);
     return (
       <Interface
       type={type}
@@ -167,11 +167,9 @@ class App extends Component {
       if (response.data.errors || response.status !== 200
         || response.data.response.code !== 200) {
         if (response.data.errors) {
-          response.data.context = "fetchOrdersApi";
-          reject(response.data);
+          reject({errors: response.data.errors, context: "fetchOrdersApi"});
         } else {
-          response.data.response.context = "fetchOrdersApi";
-          reject({data: response.data.response});
+          reject({data: response.data.response, context: "fetchOrdersApi"});
         }
       } else {
         try {
@@ -191,8 +189,7 @@ class App extends Component {
   }
 
   parseOrders(response, type) {
-    console.log("parsing: ", response);
-    const newOrders = JSON.parse(response.data.body).orders;
+    const newOrders = response.orders;
     let openIn = [];
     let otherIn = [];
     if (newOrders.length) {
@@ -406,11 +403,34 @@ class App extends Component {
     }
     this.setUpdateStatus(true);
     axios.post(ajaxurl, config)
-      .then(response => this.updateOrderResponse(response, feed, orders));
+      .then(response => this.updateOrderResponse(response, feed, orders),
+        error => Promise.reject(error))
+      .catch(response => {
+        console.log("raw output", response);
+        const finalErr = {
+          context: "setUpdateStatus",
+        };
+        if (response.data) {
+          if (response.data.errors) {
+            finalErr.errors = {...response.data.errors};
+          } else {
+            finalErr.data = {...response.data.response};
+          }
+        } else {
+          finalErr.data = {
+            code: "Unhandled Exception",
+            message: response,
+          };
+        }
+        this.logError(finalErr);
+      });
   }
 
   updateOrderResponse(response, feed, orders) {
-    if (response.status === 200) {
+    if (response.data.errors || response.status !== 200
+      || response.data.response.code !== 200) {
+      return Promise.reject(response);
+    } else {
       const data = JSON.parse(response.data.body);
       let order;
       if (data.fulfillment) {
@@ -432,9 +452,6 @@ class App extends Component {
       }
       this.setUpdateStatus("done");
       this.setState(this.moveOrder(order, feed));
-    } else {
-      this.setUpdateStatus("error");
-      this.logError(response);
     }
   }
 
@@ -519,9 +536,9 @@ class App extends Component {
     // - a non-specific error type fallback (this may be already be generated context specifically and can be passed through)
     console.log("Thur's a snake in mah boot", error);
     if (error.errors) {
-
+      console.log("found an array of errors");
     } else if (error.data) {
-      error.data.message += " (" + error.data.context + ")";
+      error.data.message += " (" + error.context + ")";
       this.setState(prevState => {
         const {errors} = prevState;
         const newIndex = (errors.index.length + 1).toString();
