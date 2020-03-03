@@ -166,14 +166,32 @@ class App extends Component {
         });
       if (response.data.errors || response.status !== 200
         || response.data.response.code !== 200) {
-        reject(response);
+        if (response.data.errors) {
+          response.data.context = "fetchOrdersApi";
+          reject(response.data);
+        } else {
+          response.data.response.context = "fetchOrdersApi";
+          reject({data: response.data.response});
+        }
       } else {
-        resolve(response);
+        try {
+          resolve(JSON.parse(response.data.body));
+        } catch(error) {
+          console.log(error);
+          reject({
+            data: {
+              code: "Invalid Data",
+              message: "Response received was not valid JSON"
+            },
+            context: "fetchOrdersApi",
+          });
+        }
       }
     });
   }
 
   parseOrders(response, type) {
+    console.log("parsing: ", response);
     const newOrders = JSON.parse(response.data.body).orders;
     let openIn = [];
     let otherIn = [];
@@ -502,7 +520,8 @@ class App extends Component {
     console.log("Thur's a snake in mah boot", error);
     if (error.errors) {
 
-    } else if (error.data.response && error.data.response.code !== 200) {
+    } else if (error.data) {
+      error.data.message += " (" + error.data.context + ")";
       this.setState(prevState => {
         const {errors} = prevState;
         const newIndex = (errors.index.length + 1).toString();
@@ -514,7 +533,7 @@ class App extends Component {
               ...errors.index,
               newIndex,
             ],
-            [newIndex]: error.data.response,
+            [newIndex]: error.data,
           }
         };
       });
