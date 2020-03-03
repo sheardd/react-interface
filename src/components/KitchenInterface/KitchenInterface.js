@@ -19,7 +19,6 @@ class KitchenInterface extends Component {
       pupData: null,
       menu: null,
       drivers: null,
-      errors: sampleErrors,
       wait: {
         wt_updated: null,
         wait_time: 0,
@@ -251,8 +250,8 @@ class KitchenInterface extends Component {
   }
 
   checkPup() {
-    const {popUps} = this.props;
-    const {menu, drivers, errors} = this.state;
+    const {popUps,errors} = this.props;
+    const {menu, drivers} = this.state;
     const keys = Object.keys(popUps);
     let result = false;
     for (let i = 0; i < keys.length; i++) {
