@@ -427,11 +427,21 @@ class App extends Component {
   }
 
   updateOrderResponse(response, feed, orders) {
-    if (response.data.errors || response.status !== 200
-      || response.data.response.code !== 200) {
-      return Promise.reject(response);
-    } else {
-      const data = JSON.parse(response.data.body);
+    if (!response.data.errors && response.status === 200
+      && (response.data.response.code === 200 || response.data.response.code === 201)) {
+      let data;
+      try {
+        data = JSON.parse(response.data.body);
+      } catch(e) {
+        console.log(e);
+        return Promise.reject({
+          data: {
+            code: "Invalid Data",
+            message: "Response received was not valid JSON"
+          },
+          context: "updateOrderResponse",
+        });
+      }
       let order;
       if (data.fulfillment) {
         // a fulfillment has either been created or updated, either attach the new fulfillment or
@@ -452,6 +462,8 @@ class App extends Component {
       }
       this.setUpdateStatus("done");
       this.setState(this.moveOrder(order, feed));
+    } else {
+      return Promise.reject(response);
     }
   }
 
