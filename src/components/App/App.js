@@ -406,21 +406,25 @@ class App extends Component {
       .then(response => this.updateOrderResponse(response, feed, orders),
         error => Promise.reject(error))
       .catch(response => {
-        console.log("raw output", response);
-        const finalErr = {
-          context: "setUpdateStatus",
-        };
-        if (response.data) {
-          if (response.data.errors) {
-            finalErr.errors = {...response.data.errors};
-          } else {
-            finalErr.data = {...response.data.response};
-          }
+        let finalErr;
+        if (response.context) {
+          finalErr = response;
         } else {
-          finalErr.data = {
-            code: "Unhandled Exception",
-            message: response,
+          finalErr = {
+            context: "updateOrderRequest",
           };
+          if (response.data) {
+            if (response.data.errors) {
+              finalErr.errors = {...response.data.errors};
+            } else {
+              finalErr.data = {...response.data.response};
+            }
+          } else {
+            finalErr.data = {
+              code: "Unhandled Exception",
+              message: response,
+            };
+          }
         }
         this.logError(finalErr);
       });
