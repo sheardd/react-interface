@@ -38,6 +38,7 @@ class KitchenInterface extends Component {
     this.checkMenuState = this.checkMenuState.bind(this);
     this.menuUpdateRequest = this.menuUpdateRequest.bind(this);
     this.menuUpdateResponse = this.menuUpdateResponse.bind(this);
+    this.menuUpdateSet = this.menuUpdateSet.bind(this);
     this.defaultMenuSelection = this.defaultMenuSelection.bind(this);
     this.driverFetchRequest = this.driverFetchRequest.bind(this);
     this.driverAssignRequest = this.driverAssignRequest.bind(this);
@@ -344,54 +345,101 @@ class KitchenInterface extends Component {
     data.append("hiding", JSON.stringify(products.hiding));
     data.append("revealing", JSON.stringify(products.revealing));
     setUpdateStatus(true);
-    axios.post(
-      ajaxurl,
-      data
-    ).then(response => this.menuUpdateResponse(response));
+    axios.post(ajaxurl,data)
+      .then(response => this.menuUpdateResponse(response))
+      .catch(response => {
+        console.log("raw output", response);
+        const {logError} = this.props;
+        let finalErr;
+        if (response.errors) {
+          finalErr = response;
+        } else {
+          finalErr = {
+            context: "menuUpdateRequest",
+          };
+          if (response.data) {
+            if (response.data.errors) {
+              finalErr.errors = {...response.data.errors};
+            } else {
+              finalErr.data = {...response.data.response};
+            }
+          } else {
+            finalErr.data = {
+              code: "Unhandled Exception",
+              message: response,
+            };
+          }
+        }
+        logError(finalErr);
+      });
   }
 
   menuUpdateResponse(response) {
+    const {setUpdateStatus, logError} = this.props;
     const data = response.data;
-    this.setState(prevState => {
-      const {menu, pupData} = prevState;
-      const {setUpdateStatus, logError} = this.props;
-      const newState = {};
-      if (!data.errors) {
-        newState.menu = {...prevState.menu};
-        let productErrors = [];
-        newState.menu.hidden.index = menu.hidden.index.filter(
-          i => !data.revealing[i] || data.revealing[i].errors
-        );
-        data.hiding.index.forEach(i => {
-          let product = data.hiding[i];
+    const productErrors = {
+      context: "menuUpdateResponse",
+      errors: []
+    };
+    const update = {
+      hiding: {
+        index: []
+      },
+      revealing: {
+        index: []
+      },
+    };
+    let failed = false;
+    console.log(response);
+    if (data && !data.errors && response.status === 200) {
+      ["hiding", "revealing"].forEach(k => {
+        data[k].index.forEach(i => {
+          let product = data[k][i];
           if (!product.error) {
-            newState.menu[product.collection][product.id].tags = product.tags;
-            newState.menu.hidden.index = [...newState.menu.hidden.index, product.id];
+            update[k][product.id] = product;
+            update[k].index = [...update[k].index, product.id];
           } else {
-            productErrors = [...productErrors, product];
+            productErrors.errors = [...productErrors.errors, product];
           }
         });
-        data.revealing.index.forEach(i => {
-          let product = data.revealing[i];
-          if (!product.error) {
-            newState.menu[product.collection][product.id].tags = product.tags;
-          } else {
-            productErrors = [...productErrors, product];
-          }
-        });
-        if (productErrors.length) {
-          // that.updateFail(productErrors, "menu-submit");
-          setUpdateStatus("error");
-          logError(productErrors);
-        } else {
-          setUpdateStatus("done");
-        }
-      } else {
-        logError(data)
+      });
+    } else {
+      failed = true;
+    }
+    if (!failed && !productErrors.errors.length) {
+      if (update.hiding.index.length || update.revealing.index.length) {
+        this.setState(this.menuUpdateSet(update));
       }
-      newState.pupData = this.defaultMenuSelection(newState.menu);
+    } else if (productErrors.errors.length) {
+      return Promise.reject(productErrors);
+    } else {
+      return Promise.reject(response);
+    }
+  }
+
+  menuUpdateSet(update) {
+    return function(prevState) {
+      const {menu, pupData} = prevState;
+      const {setUpdateStatus} = this.props;
+      const newState = {
+        menu: {...menu},
+        pupData: this.defaultMenuSelection(menu),
+      };
+      newState.menu.hidden.index = menu.hidden.index.filter(
+        i => !update.revealing[i]
+      );
+      ["hiding", "revealing"].forEach(k => {
+        update[k].index.forEach(i => {
+          let product = update[k][i];
+          newState.menu[product.collection][product.id].tags = product.tags;
+          if (k === "hiding") {
+            newState.menu.hidden.index = [...newState.menu.hidden.index, product.id];
+          }
+        });
+      });
+      setUpdateStatus("done");
       return newState;
-    });
+    }
   }
 
   defaultMenuSelection(data) {
