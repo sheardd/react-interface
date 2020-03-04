@@ -379,7 +379,9 @@ class KitchenInterface extends Component {
     const data = response.data;
     const productErrors = {
       context: "menuUpdateResponse",
-      errors: []
+      errors: {
+        index: [],
+      }
     };
     const update = {
       hiding: {
@@ -390,7 +392,6 @@ class KitchenInterface extends Component {
       },
     };
     let failed = false;
-    console.log(response);
     if (data && !data.errors && response.status === 200) {
       ["hiding", "revealing"].forEach(k => {
         data[k].index.forEach(i => {
@@ -399,18 +400,19 @@ class KitchenInterface extends Component {
             update[k][product.id] = product;
             update[k].index = [...update[k].index, product.id];
           } else {
-            productErrors.errors = [...productErrors.errors, product];
+            productErrors.errors[product.id] = product;
+            productErrors.errors.index = [...productErrors.errors.index, product.id];
           }
         });
       });
     } else {
       failed = true;
     }
-    if (!failed && !productErrors.errors.length) {
+    if (!failed && !productErrors.errors.index.length) {
       if (update.hiding.index.length || update.revealing.index.length) {
         this.setState(this.menuUpdateSet(update));
       }
-    } else if (productErrors.errors.length) {
+    } else if (productErrors.errors.index.length) {
       return Promise.reject(productErrors);
     } else {
       return Promise.reject(response);

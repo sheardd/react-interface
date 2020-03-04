@@ -6,7 +6,7 @@ import PopUpCollection from '../PopUpCollection';
 import './PopUpFormListItem.css';
 
 const PopUpFormListItem = ({context, item, i, pupSelection, ...rest}) => {
-  const title = context !== "error" ? i.toUpperCase() : (item.index ? "Menu Update Error" : item.code);
+  const title = context !== "error" ? i.toUpperCase() : (item.index && item[item.index[0]].title ? "Menu Update Error" : "Connection Error");
   return(
     <li className="pop-up-li" key={i}>
       {context === "driver" ?
@@ -26,8 +26,17 @@ const PopUpFormListItem = ({context, item, i, pupSelection, ...rest}) => {
         <>
           {item.index ?
             <>
-              <p>Encountered errors updating the following products.</p>
-              <PopUpCollection products={item} context={context}/>
+              {item[item.index[0]].title ?
+                <>
+                  <p>Encountered errors updating the following products.</p>
+                  <PopUpCollection products={item} context={context + "-product"}/>
+                </>
+              :
+                <>
+                  <p>There was a problem with the connection.</p>
+                  <PopUpCollection products={item} context={context}/>
+                </>
+              }
               <p>Please ensure you are connected to the internet and that your Shopify credentials are valid. If the problem persists, please contact the developer as soon as possible. If you have recently made product updates on Shopify, please try reloading this page and updating again. You can also look up products on Shopify (Shopify > Products) and manually update them by checking the box beside the product, then selecting Actions > Make Products Available/Unavailable.</p>
             </>
           :

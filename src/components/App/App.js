@@ -83,7 +83,7 @@ class App extends Component {
   render() {
     const {type, handle, nonce, ajaxurl} = this.props;
     const {wait, activeFeed, orders, errors, popUps, updateStatus} = this.state;
-    // console.log(errors);
+     // console.log(errors);
     return (
       <Interface
       type={type}
@@ -551,29 +551,53 @@ class App extends Component {
     //   product id, title and collection, as well as the error {code and message}
     // - a non-specific error type fallback (this may be already be generated context specifically and can be passed through)
     console.log("Thur's a snake in mah boot", error);
+    let newErr;
     if (error.errors) {
-      console.log("found an array of errors");
+      if (error.errors.index) {
+        console.log("found an array of errors");
+        error.errors.index.forEach(i => {
+          let product = error.errors[i];
+          product.error.message += " (" + error.context + ")";
+        });
+        newErr = error.errors;
+      } else {
+        newErr = {
+          index: [],
+        };
+        Object.keys(error.errors).forEach(k => {
+          if (k !== "context") {
+            newErr.index = [...newErr.index, k];
+            newErr[k] = {
+              code: k,
+              message: error.errors[k][0] + " (" + error.errors.context + ")",
+            };
+          }
+        });
+      }
     } else if (error.data) {
       error.data.message += " (" + error.context + ")";
-      this.setState(prevState => {
-        const {errors} = prevState;
-        const newIndex = (errors.index.length + 1).toString();
-        return {
-          updateStatus: "error",
-          errors: {
-            ...errors,
-            index: [
-              ...errors.index,
-              newIndex,
-            ],
-            [newIndex]: error.data,
-          }
-        };
-      });
+      newErr = error.data;
     } else {
-
+      newErr = {
+        code: "Unhandled Exception",
+        message: error + " (no context)",
+      };
     }
-
+    this.setState(prevState => {
+      const {errors} = prevState;
+      const newIndex = (errors.index.length + 1).toString();
+      return {
+        updateStatus: "error",
+        errors: {
+          ...errors,
+          index: [
+            ...errors.index,
+            newIndex,
+          ],
+          [newIndex]: newErr,
+        }
+      };
+    });
   }
 
   /**
