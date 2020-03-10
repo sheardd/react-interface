@@ -571,7 +571,6 @@ class App extends Component {
             };
           }
         });
-        console.log(newErr);
       }
     } else if (error.data) {
       error.data.message += " (" + error.context + ")";
