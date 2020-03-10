@@ -459,7 +459,7 @@ class App extends Component {
         });
         order.fulfillments = newFulfill;
       } else {
-        const order = orders[feed][data.order.id];
+        order = orders[feed][data.order.id];
         // JSON has been updated, attach the updated JSON to the existing order
         let updtJson = JSON.parse(data.order.note_attributes[0].value);
         order.json = updtJson;
@@ -554,10 +554,8 @@ class App extends Component {
     let newErr;
     if (error.errors) {
       if (error.errors.index) {
-        console.log("found an array of errors");
         error.errors.index.forEach(i => {
-          let product = error.errors[i];
-          product.error.message += " (" + error.context + ")";
+          error.errors[i].error.message += " (" + error.context + ")";
         });
         newErr = error.errors;
       } else {
@@ -569,10 +567,11 @@ class App extends Component {
             newErr.index = [...newErr.index, k];
             newErr[k] = {
               code: k,
-              message: error.errors[k][0] + " (" + error.errors.context + ")",
+              message: error.errors[k][0] + " (" + error.context + ")",
             };
           }
         });
+        console.log(newErr);
       }
     } else if (error.data) {
       error.data.message += " (" + error.context + ")";
