@@ -19,8 +19,6 @@ if (ep && ajaxurl) {
 					type={type}
 					handle={store.handle}
 					nonce={ep.staff_nonce}
-					wait_time={ep.stores.testing.wait_time}
-					wt_updated={ep.stores.testing.wt_updated}
 					ajaxurl={ajaxurl}
 					/>,
 					root);

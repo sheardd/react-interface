@@ -8,17 +8,12 @@ import Interface from '../Interface';
 import FeedGrp from '../FeedGrp';
 import Location from '../Location';
 import './App.css';
-import sampleOrders from '../../sample-data/sampleOrders.js';
 
 class App extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      wait: {
-        wait_time: props.wait_time,
-        wt_updated: props.wt_updated,
-      },
       activeFeed: "open",
       orders: {
         open: {
@@ -82,14 +77,13 @@ class App extends Component {
 
   render() {
     const {type, handle, nonce, ajaxurl} = this.props;
-    const {wait, activeFeed, orders, errors, popUps, updateStatus} = this.state;
+    const {activeFeed, orders, errors, popUps, updateStatus} = this.state;
      // console.log(errors);
     return (
       <Interface
       type={type}
       handle={handle}
       nonce={nonce}
-      wait={wait}
       orders={orders}
       errors={errors}
       fetchOrders={this.fetchOrders}
@@ -703,14 +697,25 @@ class App extends Component {
     //   return;
     // }
 
-  stop() {
+  stop(restarting = false) {
     const root = document.getElementById('root');
-    root.classList.remove("open");
+    if (!restarting) {
+      root.classList.remove("open");
+    }
     ReactDOM.unmountComponentAtNode(root);
   }
 
   restart() {
-    this.setState({orders: sampleOrders, activeFeed: "open"});
+    const root = document.getElementById('root');
+    const {type, handle, nonce, ajaxurl} = this.props;
+    this.stop(true);
+    ReactDOM.render(<App
+      type={type}
+      handle={handle}
+      nonce={nonce}
+      ajaxurl={ajaxurl}
+      />,
+      root);
   }
 
   componentDidMount() {
