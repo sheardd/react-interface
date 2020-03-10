@@ -126,32 +126,58 @@ class KitchenInterface extends Component {
           "store": handle,
           "staff_nonce": nonce,
         }
-      }).then(response => this.menuFetchResponse(response));
+      })
+      .then(response => this.menuFetchResponse(response))
+      .catch(response => {
+        const {logError} = this.props;
+        let finalErr;
+        if (response.errors || response.context) {
+          finalErr = response;
+        } else {
+          finalErr = {
+            context: "menuFetchRequest",
+          };
+          if (response.data) {
+            if (response.data.errors) {
+              finalErr.errors = {...response.data.errors};
+            } else {
+              finalErr.data = {...response.data.response};
+            }
+          } else {
+            finalErr.data = {
+              code: "Unhandled Exception",
+              message: response,
+            };
+          }
+        }
+        logError(finalErr);
+      });
   }
 
   menuFetchResponse(response) {
     const data = response.data;
     const {setUpdateStatus,logError} = this.props;
-    if (!data.errors && data.index.length) {
+    if (data && !data.errors && response.status === 200
+      && data.index.length) {
       this.setState(prevState => {
         const newState = {
-          pupData : {},
+          pupData : this.defaultMenuSelection(data),
           menu: data,
         };
-        newState.pupData = this.defaultMenuSelection(data);
         return newState;
       });
     } else {
       const empty = {
-        "errors": {
-           "No Products" : ["No products retrieved. Either none "
-             + "exist or your Shopify API credentials are invalid. "
-             + "Please check them credentials and try again."]
-         }
+        data: {
+          message: "No products retrieved. Either none "
+            + "exist or your Shopify API credentials are invalid. "
+            + "Please check your credentials and try again.",
+          code: "No Products",
+        },
+        context: "menuFetchResponse",
       };
       const fail = data.errors ? data : empty;
-      setUpdateStatus("error");
-      logError(fail);
+      return Promise.reject(fail);
     }
   }
 
@@ -467,35 +493,54 @@ class KitchenInterface extends Component {
           "store": handle,
           "staff_nonce": nonce,
         }
-      }).then(response => this.driverFetchResponse(response, orderId, context));
+      }).then(response => this.driverFetchResponse(response, orderId, context))
+      .catch(response => {
+        const {logError} = this.props;
+        let finalErr;
+        if (response.errors || response.context) {
+          finalErr = response;
+        } else {
+          finalErr = {
+            context: "driverFetchRequest",
+          };
+          if (response.data) {
+            if (response.data.errors) {
+              finalErr.errors = {...response.data.errors};
+            } else {
+              finalErr.data = {...response.data.response};
+            }
+          } else {
+            finalErr.data = {
+              code: "Unhandled Exception",
+              message: response,
+            };
+          }
+        }
+        logError(finalErr);
+      });
   }
 
+  /** 
+    * Consider a similar approach if no menu is retrieved, so that we can output 
+    * an empty menu message in popUp. Note that we still need to log an error if no
+    * menu is retrieved though.
+    */
   driverFetchResponse(response, orderId, context) {
     const data = response.data;
-    this.setState(prevState => {
-      const {setUpdateStatus, logError} = this.props;
-      const newState = {};
-      if (data) {
-        return {
-          pupData : {
-            current: null,
-            orderId,
-            context,
-          },
-          drivers: data
-        };
-      } else {
-        const empty = {
-          "errors": {
-             "No Data" : ["Please check your internet connection and try again."]
-           }
-        };
-        const fail = data.errors ? response : empty;
-        setUpdateStatus("error");
-        logError(fail);
-        // (that.updateGeneralFail("driver-fetch"))(fail);
-      }
-    });
+    if (data && !data.errors && response.status === 200) {
+      this.setState(prevState => {
+          return {
+            pupData : {
+              current: null,
+              orderId,
+              context,
+            },
+            drivers: data
+          };
+      });
+    } else {
+      return Promise.reject(data);
+    }
   }
 
   driverAssignRequest() {
@@ -516,58 +561,79 @@ class KitchenInterface extends Component {
       axios.post(
         ajaxurl,
         data
-      ).then(response => this.driverAssignResponse(response, pupData));
+      )
+      .then(response => this.driverAssignResponse(response, pupData))
+      .catch(response => {
+        const {logError} = this.props;
+        let finalErr;
+        if (response.errors || response.context) {
+          finalErr = response;
+        } else {
+          finalErr = {
+            context: "driverAssignRequest",
+          };
+          if (response.data) {
+            if (response.data.errors) {
+              finalErr.errors = {...response.data.errors};
+            } else {
+              finalErr.data = {...response.data.response};
+            }
+          } else {
+            finalErr.data = {
+              code: "Unhandled Exception",
+              message: response,
+            };
+          }
+        }
+        logError(finalErr);
+      });
     } else {
       return null;
     }
   }
 
   driverAssignResponse(response, pupData) {
-    this.setState(prevState => {
-      const {orders, setUpdateStatus, logError} = this.props;
-      const error = {
-        "errors": {}
-      };
-      if (response.data.update) {
-        const data = JSON.parse(response.data.update.body);
-        if (!data.errors) {
-          const feed = (orders.open[data.order.id] && pupData.context === "open")
-            ? "open" : "other";
-          const order = orders[feed][data.order.id];
-          order.json = JSON.parse(data.order.note_attributes[0].value);
-          order.note_attributes = order.note_attributes.map(pair => {
-            if (pair.key === "driver") {
-              pair.value = order.json.driver;
-            }
-              return pair;
-          });
-          setUpdateStatus("done");
-          return {
-            orders: {
-              ...orders,
-              [feed] : {
-                ...orders[feed],
-                [order.id]: order,
-              }
-            }
-          };
-        } else {
-          error.errors["Shopify Error"] = [response.errors];
-          setUpdateStatus("error");
-          // (that.updateGeneralFail("driver-submit"))(error);
-          logError(error);
-        }
-      } else {
-        error.errors["Response is Empty"] = ["It is probable "
-          + "that the driver was not assigned, but you can restart the interface and open "
-          + "Driver Assign for the order again to verify if one is assigned. To avoid this "
-          + "error in future, please check your internet connection and Shopify "
-          + "credentials for this location, and try again."];
-          setUpdateStatus("error");
-          logError(error);
-        // (that.updateGeneralFail("driver-submit"))(error);
+    const {orders, setUpdateStatus} = this.props;
+    if (!response.data.errors && response.status === 200
+      && (response.data.response.code === 200 || response.data.response.code === 201)) {
+      let data;
+      try {
+        data = JSON.parse(response.data.body);
+      } catch(e) {
+        console.log(e);
+        return Promise.reject({
+          data: {
+            code: "Invalid Data",
+            message: "Response received was not valid JSON"
+          },
+          context: "driverAssignResponse",
+        });
       }
-  });
+      const feed = (orders.open[data.order.id] && pupData.context === "open")
+        ? "open" : "other";
+      const order = orders[feed][data.order.id];
+      order.json = JSON.parse(data.order.note_attributes[0].value);
+      order.note_attributes = order.note_attributes.map(pair => {
+        if (pair.key === "driver") {
+          pair.value = order.json.driver;
+        }
+          return pair;
+      });
+      setUpdateStatus("done");
+      this.setState(prevState => 
+        ({
+          orders: {
+            ...orders,
+            [feed] : {
+              ...orders[feed],
+              [order.id]: order,
+            }
+          }
+        })
+      );
+    } else {
+      return Promise.reject(response);
+    }
   }
 }
 
