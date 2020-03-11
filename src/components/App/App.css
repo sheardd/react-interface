@@ -365,8 +365,8 @@
   -o-animation: color_change_del 0.8s infinite alternate;
   animation: color_change_del 0.8s infinite alternate;
 }
-#ep-interface.ki .order-container.collect.cancel-flash,
-#ep-interface.ki .order-container.collect.cancel-flash h3 {
+#ep-interface.ki .order-container.collection.cancel-flash,
+#ep-interface.ki .order-container.collection.cancel-flash h3 {
   -webkit-animation: color_change_col 0.8s infinite alternate;
   -moz-animation: color_change_col 0.8s infinite alternate;
   -ms-animation: color_change_col 0.8s infinite alternate;
