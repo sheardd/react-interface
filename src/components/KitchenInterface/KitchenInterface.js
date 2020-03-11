@@ -53,6 +53,7 @@ class KitchenInterface extends Component {
     } = this.state;
     const {
       activeFeed,
+      shouldPoll,
       switchActiveFeed,
       type,
       handle,
@@ -91,7 +92,11 @@ class KitchenInterface extends Component {
               stop={stop}
               restart={restart} />
             {children}
-            <Status togglePup={togglePup} updateStatus={updateStatus}/>
+            <Status
+              togglePup={togglePup}
+              updateStatus={updateStatus}
+              type={type}
+              shouldPoll={shouldPoll} />
           </>
         }
         </div>

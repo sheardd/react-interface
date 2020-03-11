@@ -24,7 +24,6 @@ class App extends Component {
         }
       },
       shouldPoll: false,
-      activePoll: null,
       pollTimeout: null,
       updateStatus: false,
       errors: {
@@ -77,14 +76,14 @@ class App extends Component {
 
   render() {
     const {type, handle, nonce, ajaxurl} = this.props;
-    const {activeFeed, orders, errors, popUps, updateStatus} = this.state;
-     // console.log(errors);
+    const {activeFeed, orders, shouldPoll, errors, popUps, updateStatus} = this.state;
     return (
       <Interface
       type={type}
       handle={handle}
       nonce={nonce}
       orders={orders}
+      shouldPoll={shouldPoll}
       errors={errors}
       fetchOrders={this.fetchOrders}
       popUps={popUps}
@@ -121,7 +120,7 @@ class App extends Component {
     */
   fetchOrders(init = false) {
     const {type} = this.props;
-    const {shouldPoll, activePoll, pollTimeout} = this.state;
+    const {shouldPoll, pollTimeout} = this.state;
     if (type === "di" || (type === "ki" && (init || shouldPoll))) {
       this.fetchOrdersApi(type)
         .then(response => this.parseOrders(response, type),
