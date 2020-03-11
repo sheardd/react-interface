@@ -267,7 +267,7 @@ class App extends Component {
               return o;
             }
           } else {
-            order.cancelled = true;
+            order.cancelled = order.cancelled ? order.cancelled : true;
           }
           o[order.id] = order;
           o.index = [...o.index, order.id];
@@ -352,20 +352,34 @@ class App extends Component {
     return order;
   }
 
-  toggleOrder(orderId, feed) {
-    const {orders} = this.state;
-    const {open, ...rest} = orders[feed][orderId];
-    const toggle = !open;
-    this.setState({orders: {
-      ...orders,
-      [feed]: {
-        ...orders[feed],
-        [orderId]: {
-          ...rest,
-          open: toggle
-        }
+  toggleOrder(orderId, feed, cancelled = false) {
+    // const {orders} = this.state;
+    // const {open, ...rest} = orders[feed][orderId];
+    // const toggle = !open;
+    const orderIdStr = orderId.toString();
+    this.setState(prevState => {
+      const {orders} = prevState;
+      const order = orders[feed][orderId];
+      const newState = {
+        orders: {...orders}
       }
-    }});
+      if (cancelled === "acknowledged") {
+        newState.orders[feed] = Object.keys(newState.orders[feed]).reduce((obj, key) => {
+          if (key === "index") {
+            obj[key] = orders[feed][key].filter(i => i !== orderId);
+          } else if (key !== orderIdStr) {
+            obj[key] = orders[feed][key];
+          }
+          return obj;
+        }, {});
+      } else {
+        if (cancelled) {
+          newState.orders[feed][order.id].cancelled = "acknowledged";
+        }
+        newState.orders[feed][order.id].open = !newState.orders[feed][order.id].open;
+      }
+      return newState;
+    });
   }
 
   updateOrderRequest(e, args) {

@@ -26,14 +26,15 @@ const Order = (props) => {
     {"delivery": order.json.address},
     {"collection": !order.json.address},
     {"scheduled": order.json.scheduled && order.json.scheduled !== "false"},
-    {"cancelled": order.cancelled},
+    {"cancelled": order.cancelled },
+    {"cancel-flash": order.cancelled && order.cancelled !== "acknowledged"},
     {"open": order.open},
   );
   return (
     <div
     className={orderClasses}
     style={{order: order.position}}
-    onClick={() => toggleOrder(order.id, feed)}>
+    onClick={() => toggleOrder(order.id, feed, order.cancelled)}>
       <div className="order-inner">
         <OrderTopGrp order={order} type={type} />
         <OrderItems items={order.json.items} />
