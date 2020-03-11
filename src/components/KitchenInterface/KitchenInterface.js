@@ -529,14 +529,16 @@ class KitchenInterface extends Component {
     const data = response.data;
     if (data && !data.errors && response.status === 200) {
       this.setState(prevState => {
-          return {
-            pupData : {
-              current: null,
-              orderId,
-              context,
-            },
-            drivers: data
-          };
+        const {orders} = this.props;
+        const current = orders[context][orderId].json.driver || null;
+        return {
+          pupData : {
+            current,
+            orderId,
+            context,
+          },
+          drivers: data
+        };
       });
     } else {
       return Promise.reject(data);
