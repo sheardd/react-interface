@@ -596,8 +596,7 @@
 #status-container > * {
   min-width: 80px;
 }
-#connect-status.bg-red,
-#print-status.bg-red {
+#status-container .bg-red {
   color: #fefefe;
 }
 #update-status {
