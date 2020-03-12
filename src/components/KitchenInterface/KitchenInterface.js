@@ -369,7 +369,6 @@ class KitchenInterface extends Component {
     axios.post(ajaxurl,data)
       .then(response => this.menuUpdateResponse(response))
       .catch(response => {
-        console.log("raw output", response);
         const {logError} = this.props;
         let finalErr;
         if (response.errors) {
