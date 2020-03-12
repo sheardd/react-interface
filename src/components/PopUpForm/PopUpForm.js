@@ -13,10 +13,14 @@ const PopUpForm = ({id, description, list, togglePup, submitCB, ...rest}) =>
     <PopUpFormList id={id} list={list} {...rest} />
   :
     <>
-      {id === "driver" && list && !list.index.length ?
-        <p className="pls-wait-msg">No drivers are logged in right now.</p>
-      :
-        <p className="pls-wait-msg">Fetching data, please wait...</p>
+      {id !== "settle" &&
+        <>
+          {id === "driver" && list && !list.index.length ?
+            <p className="pls-wait-msg">No drivers are logged in right now.</p>
+          :
+            <p className="pls-wait-msg">Fetching data, please wait...</p>
+          }
+        </>
       }
     </>
   }
