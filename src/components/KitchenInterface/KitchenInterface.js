@@ -32,7 +32,7 @@ class KitchenInterface extends Component {
     this.startWaitTimer = this.startWaitTimer.bind(this);
     this.waitTimerExpired = this.waitTimerExpired.bind(this);
     this.updateWaitTime = this.updateWaitTime.bind(this);
-    this.checkPup = this.checkPup.bind(this);
+    this.addPupList = this.addPupList.bind(this);
     this.pupSelection = this.pupSelection.bind(this);
     this.updatePupSelection = this.updatePupSelection.bind(this);
     this.checkMenuState = this.checkMenuState.bind(this);
@@ -61,24 +61,24 @@ class KitchenInterface extends Component {
       updateStatus,
       children,
       togglePup,
+      popUp,
       setUpdateStatus,
       pupSelection,
       stop,
       restart,
     } = this.props;
-    const pupIsOpen = this.checkPup();
     return (
       <div className={type} id="ep-interface">
         <div id="ep-interface-inner">
-        { pupIsOpen ?
+        { popUp ?
           <PopUp
-            popUp={pupIsOpen}
+            popUp={this.addPupList(popUp)}
             togglePup={togglePup}
             pupData={pupData}
             pupSelection={this.pupSelection}
             checkMenuState={this.checkMenuState}
             driverFetchRequest={this.driverFetchRequest}
-            submitCB={this.pupSubmitCB(pupIsOpen)}/>
+            submitCB={this.pupSubmitCB(popUp)}/>
         :
           <>
             <Nav
@@ -281,25 +281,15 @@ class KitchenInterface extends Component {
     });
   }
 
-  checkPup() {
-    const {popUps,errors} = this.props;
+  addPupList(pup) {
     const {menu, drivers} = this.state;
-    const keys = Object.keys(popUps);
-    let result = false;
-    for (let i = 0; i < keys.length; i++) {
-      if (popUps[keys[i]].open) {
-        result = popUps[keys[i]];
-        if (result.id === "menu") {
-          result.list = menu;
-        } else if (result.id === "driver") {
-          result.list = drivers;
-        } else if (result.id === "error") {
-          result.list = errors;
-        }
-        break;
-      }
+    const pupWithList = {...pup};
+    if (pupWithList.id === "menu") {
+      pupWithList.list = menu;
+    } else if (pupWithList.id === "driver") {
+      pupWithList.list = drivers;
     }
-    return result;
+    return pupWithList;
   }
 
   pupSelection(update, context) {

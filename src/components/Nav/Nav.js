@@ -66,7 +66,7 @@ const Nav = (props) => {
           </Button>
           <Button className={openClasses} id="int-nav-filter-open" onClick={() => switchActiveFeed("open")} >OPEN</Button>
           <Button className={otherClasses} id="int-nav-filter-other" onClick={() => switchActiveFeed("other")} >PAID</Button>
-          <Button className="bg-grey" id="int-nav-settle">
+          <Button className="bg-grey" id="int-nav-settle" onClick={() => togglePup("settle")}>
             <FontAwesomeIcon icon={faCashRegister} />
           </Button>
         </nav>

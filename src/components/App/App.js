@@ -55,6 +55,7 @@ class App extends Component {
       }
     };
 
+    this.checkPup = this.checkPup.bind(this);
     this.fetchOrders = this.fetchOrders.bind(this);
     this.fetchOrdersApi = this.fetchOrdersApi.bind(this);
     this.parseOrders = this.parseOrders.bind(this);
@@ -77,6 +78,7 @@ class App extends Component {
   render() {
     const {type, handle, nonce, ajaxurl} = this.props;
     const {activeFeed, orders, shouldPoll, errors, popUps, updateStatus} = this.state;
+    const popUp = this.checkPup();
     return (
       <Interface
       type={type}
@@ -86,7 +88,7 @@ class App extends Component {
       shouldPoll={shouldPoll}
       errors={errors}
       fetchOrders={this.fetchOrders}
-      popUps={popUps}
+      popUp={popUp}
       ajaxurl={ajaxurl}
       activeFeed={activeFeed}
       switchActiveFeed={this.switchActiveFeed}
@@ -353,9 +355,6 @@ class App extends Component {
   }
 
   toggleOrder(orderId, feed, cancelled = false) {
-    // const {orders} = this.state;
-    // const {open, ...rest} = orders[feed][orderId];
-    // const toggle = !open;
     const orderIdStr = orderId.toString();
     this.setState(prevState => {
       const {orders} = prevState;
@@ -526,6 +525,21 @@ class App extends Component {
         popUps: updtdPups
       }
     });
+  }
+  checkPup() {
+    const {popUps, errors} = this.state;
+    const keys = Object.keys(popUps);
+    let pup = false;
+    for (let i = 0; i < keys.length; i++) {
+      if (popUps[keys[i]].open) {
+        pup = popUps[keys[i]];
+        if (pup.id === "error") {
+          pup.list = errors;
+        }
+        break;
+      }
+    }
+    return pup;
   }
 
   setUpdateStatus(status) {
