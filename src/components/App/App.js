@@ -70,6 +70,8 @@ class App extends Component {
     this.moveOrder = this.moveOrder.bind(this);
     this.togglePup = this.togglePup.bind(this);
     this.setUpdateStatus = this.setUpdateStatus.bind(this);
+    this.settleOrdersRequest = this.settleOrdersRequest.bind(this);
+    this.settleOrdersResponse = this.settleOrdersResponse.bind(this);
     this.logError = this.logError.bind(this);
     this.stop = this.stop.bind(this);
     this.restart = this.restart.bind(this);
@@ -95,6 +97,7 @@ class App extends Component {
       togglePup={this.togglePup}
       updateStatus={updateStatus}
       setUpdateStatus={this.setUpdateStatus}
+      settleOrdersRequest={this.settleOrdersRequest}
       logError={this.logError}
       stop={this.stop}
       restart={this.restart} >
@@ -556,6 +559,85 @@ class App extends Component {
         updateStatus: prevState.updateStatus === "error" ? prevState.updateStatus : status
       };
     });
+  }
+
+  settleOrdersRequest() {
+    const {orders} = this.state;
+    const {ajaxurl, handle, nonce} = this.props;
+    let data = new FormData;
+    this.togglePup();
+    if (!orders.other.index.length) {
+      return null;
+    }
+    data.append('action', 'di_settle_orders');
+    data.append('store', handle);
+    data.append('staff_nonce', nonce);
+    data.append('orders', []);
+    orders.other.index.forEach(i => {
+      data.append('orders[]',
+        JSON.stringify({
+          id: orders.other[i].id,
+          paid: orders.other[i].financial_status === "paid"
+        })
+      );
+    });
+    axios.post(ajaxurl,data)
+      .then(response => this.settleOrdersResponse(response))
+      .catch(response => {
+        console.log("caught an error", response);
+        let finalErr;
+        if (response.errors) {
+          finalErr = response;
+        } else {
+          finalErr = {
+            context: "settleOrdersRequest",
+          };
+          if (response.data) {
+            if (response.data.errors) {
+              finalErr.errors = {...response.data.errors};
+            } else {
+              finalErr.data = {...response.data.response};
+            }
+          } else {
+            finalErr.data = {
+              code: "Unhandled Exception",
+              message: response,
+            };
+          }
+        }
+        this.logError(finalErr);
+      });
+  }
+
+  settleOrdersResponse(response) {
+    console.log(response);
+    if (response.data && response.status === 200) {
+      if (response.data.completed.length) {
+        this.setState(prevState => {
+          const {orders} = prevState;
+          return {
+            orders: {
+              ...orders,
+              other: Object.keys(orders.other).reduce((obj, key) => {
+                if (key !== "index" && response.data.completed.indexOf(parseInt(key)) === -1) {
+                  obj[key] = orders.other[key];
+                  obj.index = [...obj.index, key];
+                }
+                return obj;
+              }, {index: []})
+            }
+          };
+        });
+      }
+      if (response.data.errors.index.length) {
+        return Promise.reject({
+          context: "settleOrdersResponse",
+          errors: response.data.errors,
+        });
+      }
+    } else {
+      return Promise.reject(response);
+    }
   }
 
   logError(error) {
