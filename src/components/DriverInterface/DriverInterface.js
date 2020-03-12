@@ -31,7 +31,7 @@ class DriverInterface extends Component {
           <PopUp
             popUp={popUp}
             togglePup={togglePup}
-            submitCB={this.settleOrders()}/>
+            submitCB={this.settleOrders}/>
         :
           <>
             <Nav
