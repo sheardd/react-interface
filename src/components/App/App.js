@@ -232,7 +232,7 @@ class App extends Component {
       }
       if (receivedOrders) {
         const oldOrders = this.checkCancelledDelivered(orders, receivedOrders, type);
-        const newOrders = this.filterNewOrders(oldOrders, receivedOrders);
+        const newOrders = this.filterNewOrders(oldOrders, receivedOrders, type);
         newState.orders.open = {
           ...oldOrders.open,
           ...newOrders.open,
@@ -262,8 +262,7 @@ class App extends Component {
           let receivedOrder = received.open[order.id] || received.other[order.id];
           if (receivedOrder) {
             if (type === "ki" && receivedOrder.json.address
-              && receivedOrder.json.delivered
-              && receivedOrder.json.delivered === "true") {
+              && receivedOrder.json.delivered) {
               return o;
             }
           } else {
@@ -278,10 +277,11 @@ class App extends Component {
     }, {});
   }
 
-  filterNewOrders(old, receivedOrders) {
+  filterNewOrders(old, receivedOrders, type) {
     return Object.keys(receivedOrders).reduce((obj, key) => {
       obj[key] = Object.keys(receivedOrders[key]).reduce((o,k) => {
-        if (k === "index" || old[key][k]) {
+        if (k === "index" || old[key][k]
+          || (type === "ki" && receivedOrders[key][k].json.delivered)) {
           return o;
         } else {
           o[k] = receivedOrders[key][k];
@@ -294,14 +294,14 @@ class App extends Component {
   }
 
   orderFeedEval(order, type) {
-    if (type === "ki" && (!order.json.delivered || order.json.delivered === "false")) {
+    if (type === "ki") {
       if (order.fulfillment_status === "fulfilled") {
         return "other";
       } else {
         return "open";
       }
     } else if (type === "di") {
-      if (order.json.delivered && order.json.delivered === "true") {
+      if (order.json.delivered) {
         return "other";
       } else {
         return "open";
@@ -319,7 +319,7 @@ class App extends Component {
     placed = placedRaw.toLocaleString().split(" ")[1].substring(0,5);
     midnight.setHours(0,0,0,0);
     midnightUTC = midnight.getTime();
-    if (order.json.scheduled && order.json.scheduled !== "false") {
+    if (order.json.scheduled) {
       midnight.setSeconds(parseInt(order.json.eta));
       eta = midnight.toLocaleString().split(" ")[1].substring(0,5);
       if (order.json.address) {
