@@ -404,9 +404,9 @@ class App extends Component {
         config.append("fulfillment", order.fulfillments[0].id);
       }
     } else {
-      config.append("json", {...order.json, 
-        delivered: action === "done" ? true : false
-      });
+      const updtJson = cloneDeep(order.json);
+      updtJson.delivered = action === "done" ? true : false;
+      config.append("json", JSON.stringify(updtJson));
     }
     this.setUpdateStatus(true);
     axios.post(ajaxurl, config)
