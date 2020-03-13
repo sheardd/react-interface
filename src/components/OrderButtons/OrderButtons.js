@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import classNames from 'classnames';
 import Button from '../Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPrint, faCheck, faUndo, faMotorcycle } from '@fortawesome/free-solid-svg-icons'

@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import classNames from 'classnames';
 import PopUpForm from '../PopUpForm';
 import './PopUp.css';
 
 class popUp extends Component {
   constructor(props) {
     super(props);
-    const {popUp} = this.props;
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
@@ -33,7 +30,6 @@ class popUp extends Component {
   componentDidMount() {
     const {
       popUp,
-      pupData,
       checkMenuState,
       driverFetchRequest,
     } = this.props;

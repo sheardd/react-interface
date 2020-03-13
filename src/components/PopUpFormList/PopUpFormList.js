@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import classNames from 'classnames';
 import PopUpFormListItem from '../PopUpFormListItem';
 import './PopUpFormList.css';
 

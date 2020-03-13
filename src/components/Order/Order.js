@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import classNames from 'classnames';
 import OrderTopGrp from '../OrderTopGrp';
 import OrderItems from '../OrderItems';

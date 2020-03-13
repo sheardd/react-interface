@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import classNames from 'classnames';
 import { cloneDeep } from 'lodash';
 import PopUp from '../PopUp';
 import Nav from '../Nav';
@@ -43,7 +42,6 @@ class KitchenInterface extends Component {
   render() {
     const {
       pupData,
-      menu,
       wait,
       waitTimer,
     } = this.state;
@@ -52,14 +50,10 @@ class KitchenInterface extends Component {
       shouldPoll,
       switchActiveFeed,
       type,
-      handle,
-      nonce,
       updateStatus,
       children,
       togglePup,
       popUp,
-      setUpdateStatus,
-      pupSelection,
       stop,
       restart,
     } = this.props;
@@ -157,7 +151,6 @@ class KitchenInterface extends Component {
 
   menuFetchResponse(response) {
     const data = response.data;
-    const {setUpdateStatus,logError} = this.props;
     if (data && !data.errors && response.status === 200
       && data.index.length) {
       this.setState(prevState => {
@@ -264,7 +257,6 @@ class KitchenInterface extends Component {
       ajaxurl,
       data
     ).then(response => {
-      const {wait} = this.state;
       setUpdateStatus("done");
       this.setState({
         wait: {
@@ -294,7 +286,7 @@ class KitchenInterface extends Component {
 
   updatePupSelection(update, context) {
     return (prevState) => {
-      const {pupData, menu} = prevState;
+      const {pupData} = prevState;
       const updateTarget = update.checked ? "hiding" : "revealing";
       const otherTarget = update.checked ? "revealing" : "hiding";
       const newData = {
@@ -394,7 +386,6 @@ class KitchenInterface extends Component {
   }
 
   menuUpdateResponse(response) {
-    const {setUpdateStatus, logError} = this.props;
     const data = response.data;
     const productErrors = {
       context: "menuUpdateResponse",
@@ -440,7 +431,7 @@ class KitchenInterface extends Component {
 
   menuUpdateSet(update) {
     return function(prevState) {
-      const {menu, pupData} = prevState;
+      const {menu} = prevState;
       const {setUpdateStatus} = this.props;
       const newState = {
         menu: {...menu},

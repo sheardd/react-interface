@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import classNames from 'classnames';
 import PopUp from '../PopUp';
 import Nav from '../Nav';
 import Status from '../Status';

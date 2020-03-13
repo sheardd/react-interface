@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { omit, cloneDeep } from 'lodash';
-import classNames from 'classnames';
 import Interface from '../Interface';
 import FeedGrp from '../FeedGrp';
 import Location from '../Location';
@@ -79,7 +78,7 @@ class App extends Component {
 
   render() {
     const {type, handle, nonce, ajaxurl} = this.props;
-    const {activeFeed, orders, shouldPoll, errors, popUps, updateStatus} = this.state;
+    const {activeFeed, orders, shouldPoll, errors, updateStatus} = this.state;
     const popUp = this.checkPup();
     return (
       <Interface
@@ -119,7 +118,7 @@ class App extends Component {
 
   fetchOrders(init = false) {
     const {type} = this.props;
-    const {shouldPoll, pollTimeout} = this.state;
+    const {shouldPoll} = this.state;
     if (type === "di" || (type === "ki" && (init || shouldPoll))) {
       this.fetchOrdersApi(type)
         .then(response => this.parseOrders(response, type),
@@ -312,8 +311,7 @@ class App extends Component {
 
   setOrderTimes(order) {
     let placedRaw = new Date(order.created_at), placed, placedUTC, midnight = new Date(),
-      midnightUTC, eta, position, deliveryMs = 1500000, asapRaw,
-      days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+      midnightUTC, eta, position, deliveryMs = 1500000, asapRaw;
     placedUTC = placedRaw.getTime();
     placed = placedRaw.toLocaleString().split(" ")[1].substring(0,5);
     midnight.setHours(0,0,0,0);
@@ -384,7 +382,6 @@ class App extends Component {
       orderId,
       action,
       feed,
-      data,
     } = args;
     const {type, handle, nonce, ajaxurl} = this.props;
     const {orders} = this.state;
