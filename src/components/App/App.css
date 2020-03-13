@@ -206,7 +206,7 @@
   box-sizing: border-box;
   border: 1px solid #323232;
 }
-#ep-interface .pop-up .pop-up-li:after {
+#ep-interface #error.pop-up .pop-up-li:after {
   content: "";
   display: block;
   width: 80%;
