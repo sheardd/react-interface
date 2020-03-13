@@ -581,6 +581,7 @@ class App extends Component {
         })
       );
     });
+    this.setUpdateStatus(true);
     axios.post(ajaxurl,data)
       .then(response => this.settleOrdersResponse(response))
       .catch(response => {
@@ -611,6 +612,7 @@ class App extends Component {
   settleOrdersResponse(response) {
     if (response.data && response.status === 200) {
       if (response.data.completed.length) {
+        this.setUpdateStatus("done");
         this.setState(prevState => {
           const {orders} = prevState;
           return {

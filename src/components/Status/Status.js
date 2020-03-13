@@ -17,8 +17,12 @@ const Status = ({togglePup, updateStatus, type, shouldPoll}) => {
   );
   return (
     <div id='status-container'>
-      <span id='connect-status' className={connectStyles}><span className='fas fa-wifi'></span></span>
-      <span id='print-status' className='bg-grey'><span className='fas fa-print'></span></span>
+      {type === "ki" &&
+        <>
+          <span id='connect-status' className={connectStyles}><span className='fas fa-wifi'></span></span>
+          <span id='print-status' className='bg-grey'><span className='fas fa-print'></span></span>
+        </>
+      }
       <span id='update-status' className={updateStyles} onClick={() => togglePup("error")}>...</span>
     </div>
   );

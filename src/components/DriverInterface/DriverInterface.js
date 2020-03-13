@@ -4,6 +4,7 @@ import axios from 'axios';
 import classNames from 'classnames';
 import PopUp from '../PopUp';
 import Nav from '../Nav';
+import Status from '../Status';
 import './DriverInterface.css';
 
 class DriverInterface extends Component {
@@ -15,9 +16,11 @@ class DriverInterface extends Component {
   render() {
     const {
       activeFeed,
+      shouldPoll,
       switchActiveFeed,
       type,
       handle,
+      updateStatus,
       children,
       togglePup,
       popUp,
@@ -41,6 +44,11 @@ class DriverInterface extends Component {
               stop={stop}
               togglePup={togglePup} />
             {children}
+            <Status
+              togglePup={togglePup}
+              updateStatus={updateStatus}
+              type={type}
+              shouldPoll={shouldPoll} />
           </>
         }
         </div>
