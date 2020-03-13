@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPrint, faCheck, faUndo, faMotorcycle } from '@fortawesome/free-solid-svg-icons'
 import './OrderButtons.css';
 
-const OrderButtons = ({type, orderId, feed, onTick, onDriver}) => {
+const OrderButtons = ({type, orderId, feed, delivery, onTick, onDriver}) => {
   return (
     <div className="buttons-container outer">
       {type === "ki" ?
@@ -27,9 +27,11 @@ const OrderButtons = ({type, orderId, feed, onTick, onDriver}) => {
           }
         </div>
         <div className="buttons-container bottom">
+        {delivery &&
           <Button className="order-button order-driver bg-grey" onClick={(e) => {e.stopPropagation(); onDriver("driver", {orderId, feed});}} >
             <FontAwesomeIcon icon={faMotorcycle} />
           </Button>
+        }
         </div>
         </>
       :

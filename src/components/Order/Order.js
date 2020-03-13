@@ -17,10 +17,6 @@ const Order = (props) => {
     updateOrderRequest,
     togglePup,
   } = props;
-  /**
-    * Determine order container classes:
-    * - cancelled?
-    */
   const orderClasses = classNames(
     "order-container",
     {"delivery": order.json.address},
@@ -45,7 +41,13 @@ const Order = (props) => {
           {order.kitchenTime ? <h3 className="order-customer time">{order.kitchenTime}</h3> : null }
           <h3 className="order-customer time target">{order.eta}</h3>
         </div>
-        <OrderButtons type={type} orderId={order.id} feed={feed} onTick={updateOrderRequest} onDriver={togglePup}/>
+        <OrderButtons
+          type={type}
+          orderId={order.id}
+          feed={feed}
+          delivery={order.json.address}
+          onTick={updateOrderRequest}
+          onDriver={togglePup} />
       </div>
     </div>
   );
