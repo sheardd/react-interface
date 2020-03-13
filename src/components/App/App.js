@@ -117,12 +117,6 @@ class App extends Component {
     this.setState({activeFeed: feed});
   }
 
-  /**
-    *
-    * Add a check for cancelled orders between parseOrders and saveOrders
-    * calls.
-    *
-    */
   fetchOrders(init = false) {
     const {type} = this.props;
     const {shouldPoll, pollTimeout} = this.state;

@@ -4,12 +4,6 @@ import axios from 'axios';
 import classNames from 'classnames';
 import './PopUpCollectionMenuItem.css';
 
-/**
-  * The input box needs an onChange handler; React disables checkboxes that don't have
-  * one (presumably to ensure that you write a handler that updates the state with the
-  * check value)
-  */
-
 const PopUpCollectionMenuItem = ({collection, product, checked, pupSelection, }) =>
   <>
     <input type="checkbox" id={product.id}

@@ -8,9 +8,6 @@ import Nav from '../Nav';
 import Status from '../Status';
 import './KitchenInterface.css';
 
-/* Move all PopUp state (containing temporary form values) up to here, 
-(most likely including related methods) */
-
 class KitchenInterface extends Component {
   constructor(props) {
     super(props);
@@ -516,11 +513,6 @@ class KitchenInterface extends Component {
       });
   }
 
-  /** 
-    * Consider a similar approach if no menu is retrieved, so that we can output 
-    * an empty menu message in popUp. Note that we still need to log an error if no
-    * menu is retrieved though.
-    */
   driverFetchResponse(response, orderId, context) {
     const data = response.data;
     if (data && !data.errors && response.status === 200) {
