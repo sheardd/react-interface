@@ -8,7 +8,7 @@ import './PopUpForm.css';
 
 const PopUpForm = ({id, description, list, togglePup, submitCB, ...rest}) =>
 <form id={id + "-form"} className="pop-up-form">
-  <p>{description}</p>
+  {description && <p>{description}</p>}
   {list && list.index.length ?
     <PopUpFormList id={id} list={list} {...rest} />
   :
