@@ -34,7 +34,7 @@ const PopUpFormListItem = ({context, item, i, pupData, pupSelection, ...rest}) =
                 </>
               :
                 <>
-                  <p>There was a problem with the connection.</p>
+                  <p className="error-msg-top">There was a problem with the connection.</p>
                   <PopUpCollection products={item} context={context}/>
                 </>
               }

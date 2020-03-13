@@ -171,8 +171,9 @@
   overflow-y: scroll;
 }
 #ep-interface .pop-up,
-#dashboard-widgets .wrap .pop-up-form {
+#ep-interface form.pop-up-form {
   color: #444;
+  margin-top: 0;
 }
 #ep-interface .pop-up .pop-up-inner {
   width: 90%;
@@ -188,6 +189,7 @@
 #ep-interface .btn-row {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 #ep-interface .pop-up-form > p,
 #ep-interface .pop-up-form > li,
@@ -197,17 +199,25 @@
 #ep-interface .pop-up .pop-up-ul {
   list-style: none;
   padding-inline-start:0;
+  margin: 0;
 }
 #ep-interface .pop-up .pop-up-li,
 #ep-interface .submit-button {
   box-sizing: border-box;
   border: 1px solid #323232;
 }
+#ep-interface .pop-up .pop-up-li:after {
+  content: "";
+  display: block;
+  width: 80%;
+  margin: 16px auto 0;
+  border-bottom: solid 2px #323232;
+}
 #ep-interface #error.pop-up .pop-up-li {
   border: none;
 }
 #ep-interface .pop-up .pop-up-li {
-  margin-bottom: 6px;
+  margin-bottom: 16px;
 }
 #ep-interface .pop-up .pop-up-li h3,
 #ep-interface .pop-up-form > p.pls-wait-msg,
@@ -216,6 +226,12 @@
 }
 #ep-interface .pop-up .pop-up-li h3 {
   margin-bottom: 0;
+}
+ #ep-interface .pop-up .pop-up-li > p {
+  margin: 0;
+}
+#ep-interface .pop-up .pop-up-li > p.error-msg-top {
+  margin: 13px 0;
 }
 #ep-interface .pop-up .pop-up-ul .pop-up-li label {
   display: inline-block;
@@ -246,6 +262,10 @@
 #ep-interface .submit-button {
   width: 50%;
   box-sizing: border-box;
+}
+#ep-interface .pop-up .submit-button {
+  min-width: 200px;
+  margin-bottom: 16px;
 }
 #ep-interface .pop-up .pop-up-collection-list .pop-up-collection-li {
   margin: 0;
