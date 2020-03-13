@@ -7,7 +7,6 @@ import PopUp from '../PopUp';
 import Nav from '../Nav';
 import Status from '../Status';
 import './KitchenInterface.css';
-import sampleErrors from '../../sample-data/sampleErrors.js';
 
 /* Move all PopUp state (containing temporary form values) up to here, 
 (most likely including related methods) */
