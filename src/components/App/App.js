@@ -584,7 +584,6 @@ class App extends Component {
     axios.post(ajaxurl,data)
       .then(response => this.settleOrdersResponse(response))
       .catch(response => {
-        console.log("caught an error", response);
         let finalErr;
         if (response.errors) {
           finalErr = response;
@@ -610,7 +609,6 @@ class App extends Component {
   }
 
   settleOrdersResponse(response) {
-    console.log(response);
     if (response.data && response.status === 200) {
       if (response.data.completed.length) {
         this.setState(prevState => {
