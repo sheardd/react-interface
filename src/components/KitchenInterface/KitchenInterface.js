@@ -336,10 +336,13 @@ class KitchenInterface extends Component {
   }
 
   pupSubmitCB(pup) {
+    const {restart} = this.props;
     if (pup.id === "menu") {
       return this.menuUpdateRequest;
     } else if (pup.id === "driver") {
       return this.driverAssignRequest;
+    } else {
+      return restart;
     }
   }
 

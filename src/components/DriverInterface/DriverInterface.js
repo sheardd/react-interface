@@ -26,7 +26,10 @@ class DriverInterface extends Component {
       popUp,
       settleOrdersRequest,
       stop,
+      restart,
     } = this.props;
+    const pupCB = popUp ?
+      (popUp.id === "settle" ? settleOrdersRequest : restart) : null;
     return (
       <div className={type} id="ep-interface">
         <div id="ep-interface-inner">
@@ -34,7 +37,7 @@ class DriverInterface extends Component {
           <PopUp
             popUp={popUp}
             togglePup={togglePup}
-            submitCB={settleOrdersRequest}/>
+            submitCB={pupCB}/>
         :
           <>
             <Nav
